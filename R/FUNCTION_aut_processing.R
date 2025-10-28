@@ -1443,6 +1443,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
     "twl_type", "sun", "light_threshold", "script_version"
   )
 
+  posdata<-posdata[!is.na(posdata$eqfilter),] #a very few cases of NA's in the equinox filter. Unknown why.
 
   posdata_reordered <- posdata[, col_order]
   filtered_rows <- filtering
