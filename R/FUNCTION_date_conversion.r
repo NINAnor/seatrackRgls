@@ -1,3 +1,8 @@
+#' convert dates for seatrackGLS
+#'
+#' @param date Date to be converted
+#' @return Converted date in format "yyyy-mm-dd UTC"
+#' @export
 date_conversion <- function(date, tz = "UTC") {
    date <- as.character(date)
    output <- NULL

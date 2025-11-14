@@ -1,3 +1,60 @@
+#' Estimate and Refine Locations From Light Data Recorded by Geolocators.
+#'
+#' Light data must be in the format of a '.lig' (BAS/Biotrack/Lotek) or '.lux' (Migrate Technology) file.
+#' Package contains generic settings used in SEATRACK for 16 species.
+#' Procedure use the threshold method (Lisovski et al.2012), and several functions used are from the GeoLight package
+#' Package currently fit to low (1-12 lux, 1-10 bits) and intermediate light thresholds (300 lux, 50 bits), mainly in terms of calibration.
+#' Package will be expanded to adapt itself to any chosen light-level value.
+#' Data needs to be calibrated before the final run in order to produce reliable latitudes.
+#' Calibration values assigned to each tracked non breeding season - see documentation
+#'
+#' This function performs the following steps:
+#' \enumerate{
+#'   \item Read in light data and limit to one tracking year, user define where to split between tracking years. At year deployed, 'split_years' is ignored as starting point and first year tracked automatically starts with deployment date. At year retrieved, endpoint in 'split_years' is ignored, and last year tracked ends automatically at date of retrieval.
+#'   \item Estimates twilight times based on a generic threshold of light (see documentation).
+#'   \item Cleans up twilight data, informed by expected movement rate, expected breeding period and breeding location
+#'   \item Estimate latitude and longitude from timing of twilight. If no calibration value given ('sun_angle_start'), assumes 'sun_angle_start' = '-3.5'
+#'   \item Define equinox periods (manually or automatically)
+#'   \item Filter positions based on movement rates and boundaries. Positional filters are limited to longitudes during equinox.
+#'   \item Can produce filter and calibration plots (calibration plots without land mask applied)
+#'   \item Double smoothing of locations
+#'   \item Adds 'winter' and 'summer' locations to the track when the main process miss locations, by automatically running the same process with high and minimum light thresholds.
+#'   \item Final output is a table of filter performance, location table with corresponding twilight, and a twilight table before positional filters were applied.
+#' }
+#'
+#' @param luxfile Input data containing light readings.
+#' @param save_sun_plots.dir Directory for where to save plots for sun angle calibrations. If NULL, no plots produced.
+#' @param save_filter_plots.dir Directory for where to save plots fof filter performance. If NULL, no plots produced.
+#' @param speed Maximum expected movement rate as km/h, sustained between two locations with ~12 hours in between. Second location in a pair will be removed.
+#' @param boundary.box Distribution limits in decimal degrees (c(West,East,South,North)) PS! lons as 0-360 deg if crossing the 180 meridian (otherwise -180 to 180)
+#' @param coast_to_land Distance from coastline locations are allowed inland before removed. 'Inf' if no limit should be applied
+#' @param coast_to_sea Distance from coastline locations are allowed offshore before removed. 'Inf' if no limit should be applied
+#' @param loess_filter_k N interquartile ranges used to filter outliers in twilight timing using the a loess function
+#' @param months_breeding Expected months with regular presence at breeding location
+#' @param man_equinox_periods Set start and end day of a spring and autumn equinox period where latitudes are not reliable. Previously settings in SEATRACK:'c("02-20","04-03","09-08","10-20")'
+#' @param aut_equinox_periods If TRUE - start and end point of equinox periods is informed by birds' estimated latitude before and after equinox, plus the calibrated sun angle value.
+#' @param noonfilter If TRUE - remove twilights that form outliers in timing of noon or midnight.
+#' @param daylengthfilter If TRUE - remove twilights that form outliers in length of day or night.
+#' @param midnightsun_removal If TRUE - helps removing false location estimates while breeding under the midnight sun
+#' @param add_summer_pos If TRUE - add locations to dates where data is missing in the main manually calibrated track using a high threshold of light
+#' @param add_winter_pos If TRUE - add locations to dates where data is missing in the main manually calibrated track using a minimum threshold of light
+#' @param split_years Define day/month where to end and start (split) tracking year. E.g. 'c("05-31","06-01")'
+#' @param year_tracked e.g. June 2015 to May 2016 = "2015_16", January 2016 to December 2016 = "2016_16"
+#' @param sun_angle_start if NA, default is -3.5. Analyser to add manually calibrated value after an initial run of the function
+#' @param sun_angle_end filled if compensating for a change in light sensitivity (default is NA)
+#' @param light_threshold Reference for main manually calibrated track.
+#' @param logger_id default NA, information can be added for convenience
+#' @param logger_model default NA, specifying model name can inform algorithm on certain exceptions
+#' @param ring_number default NA, information can be added for convenience
+#' @param species default NA, information can be added for convenience
+#' @param colony default NA, information can be added for convenience
+#' @param col_lon longitude where bird was instrumented informs the algorithm
+#' @param col_lat latitude where bird was instrumented informs the algorithm
+#' @param date_deployed deployment date set start point
+#' @param date_retrieved retrieval date set end point
+#' @param age_deployed default NA, information can be added for convenience
+#' @return A data frame with raw and smoothed locations, twilight time, threshold and sun angle used to estimate locations, as well as some convenient info about logger and individual.
+#' @export
 seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
                         speed, boundary.box, coast_to_land, coast_to_sea, loess_filter_k, months_breeding, man_equinox_periods,
                         aut_equinox_periods, noonfilter, daylengthfilter, midnightsun_removal, add_summer_pos, add_winter_pos, split_years, year_tracked,

@@ -1,3 +1,12 @@
+#' Update existing SEATRACK metadata to inform processing of light data into positions
+#'
+#' Require login to the SEATRACK database. FUNCTION TO MOVE TO ANOTHER PACKAGE
+#'
+#' @param Colony name of colony, must correspond to the colony name in SEATRACK database. Required
+#' @param Species name of species, must correspond to the species name in SEATRACK database. Required
+#' @param Analyzer name of analyzer in order to keep some track of history. Optional
+#' @return A data.frame with metadata extracted from the database. 'Sun' columns left blank.
+#' @export
 update_seatrack_metadata <- function(df, Colony, Species, Analyzer) {
   df_old <- df
   df_new <- get_seatrack_metadata(Colony = Colony, Species = Species, Analyzer = Analyzer)

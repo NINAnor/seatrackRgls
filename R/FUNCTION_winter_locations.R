@@ -1,19 +1,30 @@
-#' Estimate and Refine Winter Locations from GLS Data
+#' Estimate and Filter Winter Locations from GLS Data
 #'
 #' This function performs the following steps:
 #' \enumerate{
 #'   \item Estimates twilight times based on a threshold of 1 (for BAS, Biotrack, Lotek, or Migrate Technology devices).
 #'   \item Cleans up the data using an initial sun angle of -5 degrees.
-#'   \item Identifies the sun angle that best matches the "summer track" by comparing tracks calculated with various sun angles to similar dates in the "summer track" and selecting the most similar one.
+#'   \item Identifies the sun angle that best matches the main manually calibrated track by comparing tracks calculated with various sun angles to similar dates in the main manually calibrated track and selecting the most similar one.
 #'   \item Recalculates the track using the most corresponding sun angle.
-#'   \item Adds missing dates to the "summer" track.
+#'   \item Add locations to dates where data is missing in the main manually calibrated track.
 #' }
 #'
-#' @param data Input data containing GLS readings.
-#' @param threshold Numeric value for twilight estimation threshold.
-#' @param initial_sun_angle Initial sun angle used for data cleanup.
-#' @param summer_track Reference track for summer locations.
-#' @return A data frame with refined winter locations and updated summer track.
+#' @param df Already processed and manually calibrated data (main).
+#' @param luxfile Input data containing light readings.
+#' @param speed Maximum expected movement rate as km/h, sustained between two locations with ~12 hours in between. Second location in a pair will be removed.
+#' @param boundary.box Distribution limits in decimal degrees (c(West,East,South,North)) PS! lons as 0-360 deg if crossing the 180 meridian (otherwise -180 to 180)
+#' @param loess_filter_k N interquartile ranges used to filter outliers in twilight timing using the a loess function.
+#' @param months_breeding Expected months with regular presence at breeding location.
+#' @param species default NA, information can be added for convenience.
+#' @param midnightsun_removal If TRUE - helps removing false location estimates while breeding under the midnight sun.
+#' @param split_years Define day/month where to end and start (split) tracking year. E.g. 'c("05-31","06-01")'.
+#' @param year_tracked e.g. June 2015 to May 2016 = "2015_16", January 2016 to December 2016 = "2016_16".
+#' @param logger_id default NA, information can be added for convenience
+#' @param date_deployed deployment date set start point
+#' @param date_retrieved retrieval date set end point
+#' @param man_equinox_periods Set start and end day of a spring and autumn equinox period where latitudes are not reliable. Previously settings in SEATRACK:'c("02-20","04-03","09-08","10-20")'
+#' @param aut_equinox_periods If TRUE - start and end point of equinox periods is informed by birds' estimated latitude before and after equinox, plus the calibrated sun angle value.
+#' @return A data frame with refined winter locations added to the main manually calibrated track.
 #' @export
 winter_locations <- function(df, luxfile, speed, boundary.box, loess_filter_k, months_breeding, species,
                              midnightsun_removal, split_years, year_tracked, logger_id, date_deployed,

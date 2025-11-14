@@ -1,3 +1,8 @@
+#' Function from GeoLight package. Property of GeoLight and Lisovski 2012.
+#'
+#' Property of GeoLight and Lisovski 2012. Small bug fixed in an outdated date-formatting function from baseR
+#'
+#' @export
 i.preSelection_bugfree <- function(datetime, light, LightThreshold) {
   dt <- floor_date(datetime, unit = "hours", week_start = getOption("lubridate.week.start", 7))
   raw <- data.frame(datetime = dt, light = light)
