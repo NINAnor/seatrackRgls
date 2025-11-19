@@ -1,3 +1,20 @@
+#' Remove twilights that form subsequent outliers in time of noon and midnight.
+#'
+#' This function performs the following steps:
+#' \enumerate{
+#'   \item Calculate noon/midnight based on twilight.
+#'   \item make noon/midnight circular.
+#'   \item split data set into day and night
+#'   \item loess predictions of noon/midnight (after excluding twilights with extreme variation from predictions)
+#'   \item fill data gaps in predictions with fillMissing()
+#'   \item find the minimum difference between a noon/midnight directly calculated from twilights and any predicted noon/midnight 4 days ahead or after candidate noon/midnight.
+#'   \item threshold for removing twilight is when difference between noon/midnight vs prediction overreach 0.4h, but under under 12h
+#'   }
+#'
+#' @param df Input data with twilight times in GMT shown as 'tfirst' and 'tsecond' (yyyy-mm-dd hh:mm:ss UTC) and 'type', with being 1 (tfirst is sunrise) or 2 (tfirst is sunset).
+#' @param show_plot if TRUE, plot is produced with timing of noon/midnight and affected twilights highlighted
+#' @return A filtered data.frame in the same format.
+#' @export
 noonfilter <- function(df, show_plot) {
   # to be used in later plotting:
   before_changes <- df
@@ -95,7 +112,7 @@ noonfilter <- function(df, show_plot) {
   # fill datagaps in predictions by fillMissing()
   full_test$predict <- fillMissing(full_test$predict, span = 1, max.fill = 90)
 
-  # fill missing predictions at the end and beginning of the year_tracked, respectivly:
+  # fill missing predictions at the end and beginning of the year_tracked, respectively:
   full_test$predict[1:(nrow(full_test) / 2)] <- na.locf(full_test$predict[1:(nrow(full_test) / 2)], fromLast = TRUE)
   full_test$predict <- na.locf(full_test$predict)
 

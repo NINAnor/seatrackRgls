@@ -1,3 +1,9 @@
+#' Reformat to SEATRACK database format (outdated per Oct, 2025)
+#'
+#'
+#' @param df seatrackGLS dataset
+#' @return dataset in database format
+#' @export
 seatrack_database_format <- function(df) {
     all_tracks <- df
 
