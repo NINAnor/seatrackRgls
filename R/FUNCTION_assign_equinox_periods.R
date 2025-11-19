@@ -27,7 +27,7 @@
 #' @return A list saying if the equinox effect is present or not (1 = no equinox effect, 0 = equinox effect).
 #' @export
 assign_equinox_periods <- function(lats, dates, breedingloc_lat, sun) {
-    equinox_table <- read.table(system.file("equinox_table", "equinox_table.txt", package = "seatrackGLS"), header = TRUE)
+    equinox_table <- read.table(system.file("equinox_table", "equinox_table.txt", package = "seatrackRgls"), header = TRUE)
     ### må legge til funksjonen en måte å forstå median sun angle for de samme periodene.
 
     DOY <- as.numeric(strftime(dates, format = "%j"))

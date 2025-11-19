@@ -836,7 +836,7 @@ winter_locations <- function(df, luxfile, speed, boundary.box, loess_filter_k, m
   if (!is.na(sun_angle_end)) {
     posdata$sun <- seq(sun_angle_start, sun_angle_end, length.out = length(posdata$tFirst))
   }
-  posdata$script_version <- "seatrackGLSv2"
+  posdata$script_version <- as.character(utils::packageVersion("seatrackRgls"))
   posdata$light_threshold <- light_threshold
   posdata$conf <- NULL
   posdata$lon_smooth1 <- NULL
