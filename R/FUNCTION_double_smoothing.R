@@ -19,7 +19,7 @@ double_smoothing <- function(df, sun) {
   df$diff.h <- difftime(df$tSecond, df$tFirst, units = "hours")
   ###### First smoothing, essentially compensation for east-west movements [mean lat (lat_smooth1)] and north-south movements [mean lon (lon_smooth1)], noon-midnigths.
 
-  latlon <- coord(df$tFirst, df$tSecond, df$type, degElevation = sun, note = F)
+  latlon <- GeoLight::coord(df$tFirst, df$tSecond, df$type, degElevation = sun, note = F)
   df <- cbind(df, latlon)
 
   df <- df[df$diff.h < 30, ] # changed from 24h 01feb2024

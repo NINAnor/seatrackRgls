@@ -16,14 +16,24 @@ Description: estimate up to two positions a day from light-level data from geolo
     which is crucial for producing realistic latitudes. The script should be run twice. 
     First with a "best-guess" sun angle, then with the calibrated sun angle. 
 Depends: 
-    R (>= 3.2.3),
+    R (>= 3.5)
 License: GPL
 Encoding: UTF-8
 LazyData: true
 Imports: 
     mice,
     lubridate,
-    raster
+    dplyr,
+    raster,
+    roll,
+    baytrends,
+    suncalc,
+    sf,
+    GeoLight,
+    DescTools,
+    CircStats,
+    zoo,
+    argosfilter
 Remotes: SLisovski/GeoLight,
     distancetocoast=github::mdsumner/distancetocoast,
     GeoLocTools=github::SLisovski/GeoLocTools,

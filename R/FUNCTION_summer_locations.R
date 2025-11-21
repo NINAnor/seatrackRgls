@@ -191,7 +191,7 @@ summer_locations <- function(df, luxfile, speed, boundary.box, loess_filter_k, m
   if (!is.na(sun_angle_end)) {
     temp$sun <- seq(sun_angle_start, sun_angle_end, length.out = length(temp$tFirst))
   }
-  latlon <- coord(tab2$tFirst, tab2$tSecond, tab2$type, degElevation = temp$sun, note = F)
+  latlon <- GeoLight::coord(tab2$tFirst, tab2$tSecond, tab2$type, degElevation = temp$sun, note = F)
   postab1 <- cbind(tab2, latlon)
   temp <- NULL
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -474,7 +474,7 @@ summer_locations <- function(df, luxfile, speed, boundary.box, loess_filter_k, m
   compare_tracks$end_of_track <- NA
   t <- 1
   for (t in 1:(length(sun.angles))) {
-    latlon.sun <- coord(posdata$tFirst, posdata$tSecond, posdata$type, degElevation = sun.angles[t], note = F)
+    latlon.sun <- GeoLight::coord(posdata$tFirst, posdata$tSecond, posdata$type, degElevation = sun.angles[t], note = F)
     latlon.sun <- data.frame(cbind(posdata[, 1:3], latlon.sun))
     as.Date(latlon.sun[, 1])
     latlon.sun[, 5]
@@ -584,7 +584,7 @@ summer_locations <- function(df, luxfile, speed, boundary.box, loess_filter_k, m
   if (!is.na(sun_angle_end)) {
     temp$sun <- seq(sun_angle_start, sun_angle_end, length.out = length(temp$tFirst))
   }
-  latlon <- coord(tab2$tFirst, tab2$tSecond, tab2$type, degElevation = temp$sun, note = F)
+  latlon <- GeoLight::coord(tab2$tFirst, tab2$tSecond, tab2$type, degElevation = temp$sun, note = F)
   postab1 <- cbind(tab2, latlon)
   temp <- NULL
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

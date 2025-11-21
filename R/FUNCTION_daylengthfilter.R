@@ -3,7 +3,7 @@
 #' This function performs the following steps:
 #' \enumerate{
 #'   \item Separate rows of day (type=1)/night(type=2), and calculate length of each day or night
-#'   \item Fill short time gaps with fillMissing().
+#'   \item Fill short time gaps with baytrends::fillMissing().
 #'   \item Fill large time gaps assuming polar night or midnight sun: Add 23.5 hrs day/0.5hrs night (midnight sun) or 0.5 hrs day/23.5 hrs night (polar night) for dates without twilights, assuming summer or winter solstice if otherwise quite long (>16hrs) or quite short day (<8hrs) in that period of the year.
 #'   \item Calculate different length in day/night between consecutive dates.
 #'   \item Initial filtering: Endpoints are filtered by comparing day/night lengths to a 20-day mean, to accommodate the often poor data quality due to shading from nest attendance at start and end of logging periods
@@ -47,8 +47,8 @@ daylengthfilter <- function(df, show_plot) {
 
   # short (2days)
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
-  full_test$mediandaylength <- fillMissing(full_test$mediandaylength, span = 1, max.fill = 2)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
+  full_test$mediandaylength <- baytrends::fillMissing(full_test$mediandaylength, span = 1, max.fill = 2)
   full_test$daylength[is.na(full_test$daylength)] <- full_test$mediandaylength[is.na(full_test$daylength)]
   full_test$mediandaylength <- NULL
 
@@ -93,12 +93,12 @@ daylengthfilter <- function(df, show_plot) {
 
   # build loess predictions based on 5 day running means:
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmean(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = NA)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmean(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = NA)
   full_test$predict <- NA
   full_test$predict[!is.na(full_test$mediandaylength)] <- predict(loess(as.numeric(full_test$mediandaylength[!is.na(full_test$mediandaylength)]) ~ as.numeric(full_test$date[!is.na(full_test$mediandaylength)]), span = 0.1))
   full_test$predict[1] <- full_test$predict[!is.na(full_test$predict)][1]
   full_test$predict[nrow(full_test)] <- full_test$predict[!is.na(full_test$predict)][length(full_test$predict[!is.na(full_test$predict)])]
-  full_test$predict <- fillMissing(full_test$predict, span = 1, max.fill = 60)
+  full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 60)
 
   full_test$daylength_orig <- difftime(full_test$tSecond, full_test$tFirst, units = "hours")
 
@@ -160,8 +160,8 @@ daylengthfilter <- function(df, show_plot) {
 
   # short (2days)
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
-  full_test$mediandaylength <- fillMissing(full_test$mediandaylength, span = 1, max.fill = 2)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
+  full_test$mediandaylength <- baytrends::fillMissing(full_test$mediandaylength, span = 1, max.fill = 2)
   full_test$daylength[is.na(full_test$daylength)] <- full_test$mediandaylength[is.na(full_test$daylength)]
   full_test$mediandaylength <- NULL
 
@@ -207,12 +207,12 @@ daylengthfilter <- function(df, show_plot) {
 
   # build loess predictions based on 5 day running medians:
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmean(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmean(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
   full_test$predict <- NA
   full_test$predict[!is.na(full_test$mediandaylength)] <- predict(loess(as.numeric(full_test$mediandaylength[!is.na(full_test$mediandaylength)]) ~ as.numeric(full_test$date[!is.na(full_test$mediandaylength)]), span = 0.1))
   full_test$predict[1] <- full_test$predict[!is.na(full_test$predict)][1]
   full_test$predict[nrow(full_test)] <- full_test$predict[!is.na(full_test$predict)][length(full_test$predict[!is.na(full_test$predict)])]
-  full_test$predict <- fillMissing(full_test$predict, span = 1, max.fill = 60)
+  full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 60)
 
   full_test$daylength_orig <- difftime(full_test$tSecond, full_test$tFirst, units = "hours")
 
@@ -281,8 +281,8 @@ daylengthfilter <- function(df, show_plot) {
 
   # short (3days)
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
-  full_test$mediandaylength <- fillMissing(full_test$mediandaylength, span = 1, max.fill = 3)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = TRUE)
+  full_test$mediandaylength <- baytrends::fillMissing(full_test$mediandaylength, span = 1, max.fill = 3)
   full_test$daylength[is.na(full_test$daylength)] <- full_test$mediandaylength[is.na(full_test$daylength)]
   full_test$mediandaylength <- NULL
 
@@ -327,12 +327,12 @@ daylengthfilter <- function(df, show_plot) {
 
   # build loess predictions based on 3 day running medians:
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 3, fill = NA)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 3, fill = NA)
   full_test$predict <- NA
   full_test$predict[!is.na(full_test$mediandaylength)] <- predict(loess(as.numeric(full_test$mediandaylength[!is.na(full_test$mediandaylength)]) ~ as.numeric(full_test$date[!is.na(full_test$mediandaylength)]), span = 0.1))
   full_test$predict[1] <- full_test$predict[!is.na(full_test$predict)][1]
   full_test$predict[nrow(full_test)] <- full_test$predict[!is.na(full_test$predict)][length(full_test$predict[!is.na(full_test$predict)])]
-  full_test$predict <- fillMissing(full_test$predict, span = 1, max.fill = 60)
+  full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 60)
 
   full_test$daylength_orig <- difftime(full_test$tSecond, full_test$tFirst, units = "hours")
 
@@ -394,8 +394,8 @@ daylengthfilter <- function(df, show_plot) {
 
   # short (3days)
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = NA)
-  full_test$mediandaylength <- fillMissing(full_test$mediandaylength, span = 1, max.fill = 3)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 5, fill = NA)
+  full_test$mediandaylength <- baytrends::fillMissing(full_test$mediandaylength, span = 1, max.fill = 3)
   full_test$daylength[is.na(full_test$daylength)] <- full_test$mediandaylength[is.na(full_test$daylength)]
   full_test$mediandaylength <- NULL
 
@@ -441,12 +441,12 @@ daylengthfilter <- function(df, show_plot) {
 
   # build loess predictions based on 3 day running medians:
   full_test$mediandaylength <- NA
-  full_test$mediandaylength[!is.na(full_test$daylength)] <- rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 3, fill = NA)
+  full_test$mediandaylength[!is.na(full_test$daylength)] <- zoo::rollmedian(full_test$daylength[!is.na(full_test$daylength)], k = 3, fill = NA)
   full_test$predict <- NA
   full_test$predict[!is.na(full_test$mediandaylength)] <- predict(loess(as.numeric(full_test$mediandaylength[!is.na(full_test$mediandaylength)]) ~ as.numeric(full_test$date[!is.na(full_test$mediandaylength)]), span = 0.1))
   full_test$predict[1] <- full_test$predict[!is.na(full_test$predict)][1]
   full_test$predict[nrow(full_test)] <- full_test$predict[!is.na(full_test$predict)][length(full_test$predict[!is.na(full_test$predict)])]
-  full_test$predict <- fillMissing(full_test$predict, span = 1, max.fill = 60)
+  full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 60)
 
   full_test$daylength_orig <- difftime(full_test$tSecond, full_test$tFirst, units = "hours")
 
@@ -509,7 +509,6 @@ daylengthfilter <- function(df, show_plot) {
     axis.Date(1, at = seq(daterange[1], daterange[2], by = "month"), format = "%b", cex.axis = 0.6, tck = -0.02, mgp = c(3, 0, 0))
     axis(side = 2, at = c(1:24), labels = c(1:24), tck = -0.02, cex.axis = 0.6, las = 2, mgp = c(3, 0.3, 0))
     legend("top", legend = c("twl", "del. twl", "pred. day L.", "day L.", "pred. night L.", "night L."), horiz = TRUE, col = c("grey", "firebrick", "orange", "grey", "black", "lightblue"), pch = c(19, 19, NA, NA, NA, NA), lty = c(NA, NA, 1, 1, 1, 1), cex = 0.25)
-    dev.off()
   }
 
 

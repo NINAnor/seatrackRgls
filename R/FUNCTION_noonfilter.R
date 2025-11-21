@@ -6,7 +6,7 @@
 #'   \item make noon/midnight circular.
 #'   \item split data set into day and night
 #'   \item loess predictions of noon/midnight (after excluding twilights with extreme variation from predictions)
-#'   \item fill data gaps in predictions with fillMissing()
+#'   \item fill data gaps in predictions with baytrends::fillMissing()
 #'   \item find the minimum difference between a noon/midnight directly calculated from twilights and any predicted noon/midnight 4 days ahead or after candidate noon/midnight.
 #'   \item threshold for removing twilight is when difference between noon/midnight vs prediction overreach 0.4h, but under under 12h
 #'   }
@@ -109,12 +109,12 @@ noonfilter <- function(df, show_plot) {
   full_test$tFirst <- as_datetime(full_test$tFirst)
   full_test$tSecond <- as_datetime(full_test$tSecond)
 
-  # fill datagaps in predictions by fillMissing()
-  full_test$predict <- fillMissing(full_test$predict, span = 1, max.fill = 90)
+  # fill datagaps in predictions by baytrends::fillMissing()
+  full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 90)
 
   # fill missing predictions at the end and beginning of the year_tracked, respectively:
-  full_test$predict[1:(nrow(full_test) / 2)] <- na.locf(full_test$predict[1:(nrow(full_test) / 2)], fromLast = TRUE)
-  full_test$predict <- na.locf(full_test$predict)
+  full_test$predict[1:(nrow(full_test) / 2)] <- zoo::na.locf(full_test$predict[1:(nrow(full_test) / 2)], fromLast = TRUE)
+  full_test$predict <- zoo::na.locf(full_test$predict)
 
   day <- full_test
 
@@ -158,12 +158,12 @@ noonfilter <- function(df, show_plot) {
   full_test$tFirst <- as_datetime(full_test$tFirst)
   full_test$tSecond <- as_datetime(full_test$tSecond)
 
-  # fill datagaps in predictions by fillMissing()
-  full_test$predict <- fillMissing(full_test$predict, span = 1, max.fill = 90)
+  # fill datagaps in predictions by baytrends::fillMissing()
+  full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 90)
 
   # fill missing predictions at the end and beginning of the year_tracked, respectivly:
-  full_test$predict[1:(nrow(full_test) / 2)] <- na.locf(full_test$predict[1:(nrow(full_test) / 2)], fromLast = TRUE)
-  full_test$predict <- na.locf(full_test$predict)
+  full_test$predict[1:(nrow(full_test) / 2)] <- zoo::na.locf(full_test$predict[1:(nrow(full_test) / 2)], fromLast = TRUE)
+  full_test$predict <- zoo::na.locf(full_test$predict)
   night <- full_test
 
   # find the difference between a midnight directly calculated from twilights
@@ -227,7 +227,6 @@ noonfilter <- function(df, show_plot) {
       col = c("grey", "firebrick", "grey", "orange", "lightblue", "black"),
       pch = c(19, 19, NA, NA, NA, NA), lty = c(NA, NA, 1, 1, 1, 1), cex = 0.25
     )
-    dev.off()
   }
 
 

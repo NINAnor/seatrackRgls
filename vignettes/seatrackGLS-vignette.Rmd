@@ -1,23 +1,15 @@
 ---
-output:
-  word_document: default
-  html_document: default
-  pdf_document: default
----
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = FALSE)
-```
-
----
-title: "seatrackGLS tutorial 2"
+title:"seatrackGLS tutorial"
 output:
   html_document:
-  pdf_document: default
-  word_document: default
-  fig_width: 8
-  fig_height: 6
-date: 'creation date: `r Sys.Date()`'
+  date:"2025-11-19"
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, )
+```
+
+
 
 | *contact re. GLS data processing: [vegard.brathen\@nina.no](mailto:vegard.brathen@nina.no){.email}*
 
@@ -34,19 +26,21 @@ For the four 'new' individuals, data has to be calibrated, meaning a preliminary
 
 At last, seatrackGLS is  run a final time on all the data and the positional data is then ready to be used and imported into the SEATRACK database.   
 
-
+### Prepare workspace
+```{r setup}
+library(seatrackRgls)
+library(GeoLocTools)
+```
 
 ### Specify colony and species
 The script is set up to run with data from one colony and one species at a time.
 - The user specify which colony and which species
 
-```{r echo=TRUE,results='hide',message = FALSE}
-#---------------------- specify species and colony and who is running the analysis ---------------
-Colony = "Halten"
-Species = "Black-legged kittiwake"
-Analyzer = "test"
+```{r echo=TRUE, results='hide', message = FALSE}
+Colony <- "Halten"
+Species <- "Black-legged kittiwake"
+Analyzer <- "test"
 ```
-
 
 ### Set up directories
 A series of directories needs to be specified.
@@ -57,16 +51,17 @@ Other imports and exports (metadata ('string_dir'), maps ('save_maps'), filterin
 The user must therefore make sure to check that the species-specific folders are set up right and that the respective directories works 
 
 ```{r echo=TRUE,results='hide',message = FALSE}
-#---------------------- set up directories ---------------
-
-#species-colony specific
+# EXPORT PLOT DIRECTORY
+# species-colony specific
 string_dir<-"C:/Users/vegard.brathen/Norsk Polarinstitutt/Benjamin Merkel - SEATRACK - shared/Database/Imports_Positions_seatrackGLS/Scripts/practise_seatrackGLS/"
 save_sun_plots<-paste(string_dir,"sun_calib/",sep="")
 save_maps<-paste(string_dir,"maps/",sep="")
 save_filter_plots<-paste(string_dir,"plots/",sep="")
 
+# LUX_DIR - IMPORT DIRECTORY
 #centralized
 lux_dir<-"C:/Users/vegard.brathen/Norsk Polarinstitutt/Benjamin Merkel - SEATRACK - shared/Database/Imports_Logger data/Raw logger data/ALL/"
+# EXPORT PROCESSED TABULAR DATA FILES
 data_files_dir<-"C:/Users/vegard.brathen/Norsk Polarinstitutt/Benjamin Merkel - SEATRACK - shared/Database/Imports_Positions_seatrackGLS/Scripts/practise_seatrackGLS/data_files/"
 
 ```
@@ -76,27 +71,7 @@ data_files_dir<-"C:/Users/vegard.brathen/Norsk Polarinstitutt/Benjamin Merkel - 
 seatrackGLS is at the moment a 'local' R package. Meaning it won't work in the same way as other R packages.
 In order to make it work, package 'devtools' must be installed and the location of the package must be chosen as the 'working directory' before installing or requiring seatrackGLS. Afterwards, it will work as any other R package.
 
-```{r echo=TRUE,results='hide',message = FALSE}
-#---------------------- loading packages ---------------
-library(devtools) #install.packages('devtools')
-setwd("C:/Users/vegard.brathen/Norsk Polarinstitutt/Benjamin Merkel - SEATRACK - shared/Database/Imports_Positions_seatrackGLS/seatrackGLS")
-# Load seatrackGLS
-devtools::load_all(".")
-library(seatrackRgls)
-```
-
 seatrackGLS relies on R functions from GeoLight, which is another R package made for geolocator processing. It is convenient to install the 'GeoLocTools', which is a compilation on packages that are used to process geolocator data - like FlightR, probGLS, SGAT, GeoLight etc.
-
-```{r echo=TRUE,results='hide',message = FALSE}
-#install_github("SLisovski/GeoLocTools") #run if installing GeoLocTools
-library(GeoLocTools)
-#setupGeolocation() #run if installing GeoLocTools
-```
-
-Other packages needed here is the 'seatrackR' package in order to extract information from the SEATRACK database:
-```{r echo=TRUE,results='hide',message = FALSE}
-library(seatrackR)#devtools::install_github('NINAnor/seatrack-db/seatrackR',force = TRUE)
-```
 
 ### Import metadata
 seatrackGLS rquire supporting metadata about the logger used and the instrumented individual in order to work.

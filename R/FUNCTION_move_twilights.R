@@ -67,23 +67,23 @@ move_twilights <- function(df, speed, sun, show_plot) {
   # during an approx equinox period the function use estimated lats based on 10 lats before and after each equinox period
   # for a few remaining NA's, the average threshold across lats and months is used (22 min)
 
-  latlon <- coord(df$tFirst, df$tSecond, df$type, degElevation = sun, note = F)
+  latlon <- GeoLight::coord(df$tFirst, df$tSecond, df$type, degElevation = sun, note = F)
   df <- cbind(df, latlon)
 
-  df$lat <- fillMissing(df$lat, span = 1, max.fill = 5)
+  df$lat <- baytrends::fillMissing(df$lat, span = 1, max.fill = 5)
   # remove lats during approx. spring equinox period (21 Feb - 17 Apr)
   df$lat[yday(df$tFirst) %in% c(52:107)] <- NA
   # remove lats during approx. autumn equinox period (27 Aug - 20 Oct)
   df$lat[yday(df$tFirst) %in% c(238:293)] <- NA
   # fill missing lats with linear lats based on 10 lats before and after each equinox period
   if (!(yday(df$tFirst[1])) %in% c(251:293)) {
-    df$lat <- fillMissing(df$lat, span = 10, max.fill = 130)
+    df$lat <- baytrends::fillMissing(df$lat, span = 10, max.fill = 130)
   }
 
   df$thresholds <- 22
   if (length(na.omit(df$lat)) > 0) {
     for (i in 1:nrow(df[!is.na(df$lat), ])) {
-      df$thresholds[!is.na(df$lat)][i] <- thresholds[which(thresholds$closest_lat == Closest(thresholds[, 1], df$lat[!is.na(df$lat)][i])), (month(df$tFirst[!is.na(df$lat)][i]) + 1)]
+      df$thresholds[!is.na(df$lat)][i] <- thresholds[which(thresholds$closest_lat == DescTools::Closest(thresholds[, 1], df$lat[!is.na(df$lat)][i])), (month(df$tFirst[!is.na(df$lat)][i]) + 1)]
     }
   }
 
@@ -132,7 +132,7 @@ move_twilights <- function(df, speed, sun, show_plot) {
       rise2$change[i + 1] <- FALSE
     }
     if (rise2$diff_doy2[i] == 1 & rise2$diff_doy3[i] == 2 & rise2$diffmin_rowi2[i] > (((rise2$threshold[i] - 15) / 2) + minutes_different) & rise2$diffmin_rowi2[i + 1] > (((rise2$threshold[i] - 15) / 2) + minutes_different) & rise2$diffmin_rowi3[i] < rise2$threshold[i]) {
-      rise2$changeto[i + 1] <- ((circ.mean(conv * (c(rise2$minutes[i], rise2$minutes[i + 2]) - 1)) / conv) + 1440) %% 1440
+      rise2$changeto[i + 1] <- ((CircStats::circ.mean(conv * (c(rise2$minutes[i], rise2$minutes[i + 2]) - 1)) / conv) + 1440) %% 1440
     }
   }
 
@@ -185,7 +185,7 @@ move_twilights <- function(df, speed, sun, show_plot) {
       set2$change[i + 1] <- FALSE
     }
     if (set2$diff_doy2[i] == 1 & set2$diff_doy3[i] == 2 & set2$diffmin_rowi2[i] > (((set2$threshold[i] - 15) / 2) + minutes_different) & set2$diffmin_rowi2[i + 1] > (((set2$threshold[i] - 15) / 2) + minutes_different) & set2$diffmin_rowi3[i] < set2$threshold[i]) {
-      set2$changeto[i + 1] <- ((circ.mean(conv * (c(set2$minutes[i], set2$minutes[i + 2]) - 1)) / conv) + 1440) %% 1440
+      set2$changeto[i + 1] <- ((CircStats::circ.mean(conv * (c(set2$minutes[i], set2$minutes[i + 2]) - 1)) / conv) + 1440) %% 1440
     }
   }
 

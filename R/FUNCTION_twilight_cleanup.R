@@ -26,7 +26,7 @@
 #' @param sun_angle_end filled if compensating for a change in light sensitivity (default is NA)
 #' @return A data frame with raw and smoothed locations, twilight time, threshold and sun angle used to estimate locations, as well as some convenient info about logger and individual.
 #' @export
-twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breeding, species, show_plot, sun_angle_start, sun_angle_end) {
+twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breeding, species, show_plot, sun_angle_start, sun_angle_end, show_filter_plots = FALSE) {
   # datetime_conversion
   df$time <- strftime(df$tFirst, format = "%H:%M:%S")
   df$time_mins <- as.numeric(difftime(as.POSIXct(df$time, format = "%H:%M:%S"), as.POSIXct("00:00:00", format = "%H:%M:%S"), units = "min"))
@@ -91,7 +91,7 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
   together$DTime <- as.POSIXct(together$tFirst, format = "%d/%m/%y %H:%M", tz = "GMT")
   ok <- NULL
   ok <- together[order(together$DTime, decreasing = FALSE), ]
-  ok2 <- ok[, 1:6]
+  ok2 <- ok
   ###########################
   if (species %in% c(
     "Common eider", "common eider", "Somateria mollissima", "somateria mollissima",
@@ -153,7 +153,7 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
     together$DTime <- as.POSIXct(together$tFirst, format = "%d/%m/%y %H:%M", tz = "GMT")
     ok <- NULL
     ok <- together[order(together$DTime, decreasing = FALSE), ]
-    ok2 <- ok[, 1:6]
+    ok2 <- ok
     ###########################
   }
 
@@ -164,18 +164,18 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
   ok2$loess_filter <- TRUE
   tryCatch(
     {
-      ok2$loess_filter[ok2$remove == FALSE] <- loessFilter(ok2$tFirst[ok2$remove == FALSE], ok2$tSecond[ok2$remove == FALSE], ok2$type[ok2$remove == FALSE], k = 3, plot = F)
+      ok2$loess_filter[ok2$remove == FALSE] <- GeoLight::loessFilter(ok2$tFirst[ok2$remove == FALSE], ok2$tSecond[ok2$remove == FALSE], ok2$type[ok2$remove == FALSE], k = 3, plot = F)
     },
     error = function(e) {}
   )
 
   # Standard deviation: calculate SD every 5th day to keep points with SD> 60mins out when making predictions:
-  ok2$sd[ok2$type == 1] <- roll_sd((hour(ok2$tFirst[ok2$type == 1]) * 60) + minute(ok2$tFirst[ok2$type == 1]), 5,
+  ok2$sd[ok2$type == 1] <- roll::roll_sd((hour(ok2$tFirst[ok2$type == 1]) * 60) + minute(ok2$tFirst[ok2$type == 1]), 5,
     weights = rep(1, 5), center = TRUE,
     min_obs = 1, complete_obs = FALSE, na_restore = FALSE,
     online = TRUE
   )
-  ok2$sd[ok2$type == 2] <- roll_sd((hour(ok2$tFirst[ok2$type == 2]) * 60) + minute(ok2$tFirst[ok2$type == 2]), 5,
+  ok2$sd[ok2$type == 2] <- roll::roll_sd((hour(ok2$tFirst[ok2$type == 2]) * 60) + minute(ok2$tFirst[ok2$type == 2]), 5,
     weights = rep(1, 5), center = TRUE,
     min_obs = 1, complete_obs = FALSE, na_restore = FALSE,
     online = TRUE
@@ -211,11 +211,11 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
   }
 
   # instruct max.fill to fill by number of dates, not number of rows:
-  fillMisspred1 <- ok3[c(1, 3, 10)]
+  fillMisspred1 <- ok3
   fillMisspred1 <- fillMisspred1[fillMisspred1$type %in% 1, ]
   fillMisspred1 <- fillMisspred1[!duplicated(as.Date(fillMisspred1$tFirst)), ]
 
-  fillMisspred2 <- ok3[c(1, 3, 10)]
+  fillMisspred2 <- ok3
   fillMisspred2 <- fillMisspred2[fillMisspred2$type %in% 2, ]
   fillMisspred2 <- fillMisspred2[!duplicated(as.Date(fillMisspred2$tFirst)), ]
 
@@ -264,8 +264,8 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
   )
 
   # fill short holes in the dataset:
-  fillMisspred1$predict <- fillMissing(fillMisspred1$predict, span = 1, max.fill = 5)
-  fillMisspred2$predict <- fillMissing(fillMisspred2$predict, span = 1, max.fill = 5)
+  fillMisspred1$predict <- baytrends::fillMissing(fillMisspred1$predict, span = 1, max.fill = 5)
+  fillMisspred2$predict <- baytrends::fillMissing(fillMisspred2$predict, span = 1, max.fill = 5)
 
 
   # define "nonbreeding" months. For practicalities, add first and last summermonth of breeding to the "months_nonbreeding"
@@ -289,8 +289,8 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
 
 
   # fill larger holes in the dataset up to 20 days during non-breeding:
-  fillMisspred1$predict[month(fillMisspred1$Date) %in% winter_months] <- fillMissing(fillMisspred1$predict[month(fillMisspred1$Date) %in% winter_months], span = 5, max.fill = 60)
-  fillMisspred2$predict[month(fillMisspred2$Date) %in% winter_months] <- fillMissing(fillMisspred2$predict[month(fillMisspred2$Date) %in% winter_months], span = 5, max.fill = 60)
+  fillMisspred1$predict[month(fillMisspred1$Date) %in% winter_months] <- baytrends::fillMissing(fillMisspred1$predict[month(fillMisspred1$Date) %in% winter_months], span = 5, max.fill = 60)
+  fillMisspred2$predict[month(fillMisspred2$Date) %in% winter_months] <- baytrends::fillMissing(fillMisspred2$predict[month(fillMisspred2$Date) %in% winter_months], span = 5, max.fill = 60)
 
   fillMisspred1 <- fillMisspred1[!is.na(fillMisspred1$type), ]
   fillMisspred2 <- fillMisspred2[!is.na(fillMisspred2$type), ]
@@ -314,7 +314,7 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
   # When breeding months are specified, find time of civil dusk and dawn for the breeding location during the year.
 
   if (length(months_breeding) > 0) {
-    sun_data <- getSunlightTimes(
+    sun_data <- suncalc::getSunlightTimes(
       date = ok3$date, lat = breedingloc_lat, lon = breedingloc_lon,
       keep = c("dawn", "dusk"), tz = "GMT"
     ) # tz changed from "UTC" to "GMT"
@@ -339,9 +339,9 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
     }
     sun <- seq(sun_angle_start, sun_angle_end, length.out = nrow(ok3))
 
-    b_location <- SpatialPoints(cbind(breedingloc_lon, breedingloc_lat), proj4string = CRS("+proj=longlat +datum=WGS84"))
-    dawn2 <- crepuscule(b_location, ok3$tFirst, abs(sun), direction = c("dawn"), POSIXct.out = T)
-    dusk2 <- crepuscule(b_location, ok3$tFirst, abs(sun), direction = c("dusk"), POSIXct.out = T)
+    b_location <- sf::st_as_sf(data.frame(x = breedingloc_lon, y = breedingloc_lat), coords = c("x", "y"), crs = "+proj=longlat +datum=WGS84")
+    dawn2 <- suntools::crepuscule(b_location, ok3$tFirst, abs(sun), direction = c("dawn"), POSIXct.out = T)
+    dusk2 <- suntools::crepuscule(b_location, ok3$tFirst, abs(sun), direction = c("dusk"), POSIXct.out = T)
 
     hours_dusk <- as.numeric(format(dusk2$time, "%H")) + as.numeric(format(dusk2$time, "%M")) / 60
     hours_dawn <- as.numeric(format(dawn2$time, "%H")) + as.numeric(format(dawn2$time, "%M")) / 60
@@ -369,13 +369,12 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
 
 
   #################################
-  #' This function returns the time in 'timeVector' that is ' closest to 'time'
+  #This function returns the time in 'timeVector' that is ' closest to 'time'
   closest.time <- function(timeVector, time) {
-    times()
-    x <- times(timeVector)
-    v <- times(time)
+    x <- chron::times(timeVector)
+    v <- chron::times(time)
     clockwise_distance <- abs(x - v)
-    anticlockwise_distance <- times("23:59:59") - clockwise_distance + times("00:00:01")
+    anticlockwise_distance <- chron::times("23:59:59") - clockwise_distance + chron::times("00:00:01")
     clockwise_and_anticlockwise <- matrix(c(anticlockwise_distance, clockwise_distance), ncol = 2)
     shortest_distance_of_the_two <- apply(clockwise_and_anticlockwise, 1, min)
     indx <- which(shortest_distance_of_the_two == min(shortest_distance_of_the_two))

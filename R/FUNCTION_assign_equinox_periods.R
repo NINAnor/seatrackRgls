@@ -27,7 +27,6 @@
 #' @return A list saying if the equinox effect is present or not (1 = no equinox effect, 0 = equinox effect).
 #' @export
 assign_equinox_periods <- function(lats, dates, breedingloc_lat, sun) {
-    equinox_table <- read.table(system.file("equinox_table", "equinox_table.txt", package = "seatrackRgls"), header = TRUE)
     ### må legge til funksjonen en måte å forstå median sun angle for de samme periodene.
 
     DOY <- as.numeric(strftime(dates, format = "%j"))
@@ -119,9 +118,9 @@ assign_equinox_periods <- function(lats, dates, breedingloc_lat, sun) {
 
     df <- as.data.frame(DOY)
     colnames(df) <- c("DOY")
-    df$eqfilter <- 1
-    df$eqfilter[df$DOY >= (start_aut + 1) & df$DOY <= (end_aut - 1)] <- 0
-    df$eqfilter[df$DOY >= (start_spring + 1) & df$DOY <= (end_spring - 1)] <- 0
+    df$eqfilter <- TRUE
+    df$eqfilter[df$DOY >= (start_aut + 1) & df$DOY <= (end_aut - 1)] <- FALSE
+    df$eqfilter[df$DOY >= (start_spring + 1) & df$DOY <= (end_spring - 1)] <- FALSE
 
     output <- df$eqfilter
     return(output)

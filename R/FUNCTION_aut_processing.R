@@ -354,7 +354,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
     temp$sun <- as.numeric(seq(sun_angle_start, sun_angle_end, length.out = length(temp$tFirst)))
   }
 
-  latlon <- coord(tab2$tFirst, tab2$tSecond, tab2$type, degElevation = temp$sun, note = F)
+  latlon <- GeoLight::coord(tab2$tFirst, tab2$tSecond, tab2$type, degElevation = temp$sun, note = F)
   postab1 <- cbind(tab2, latlon)
 
   temp <- NULL
@@ -836,7 +836,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
       sun <- as.numeric(seq(sun_angle_start, sun_angle_end, length.out = length(before_tw_remov$tFirst)))
     }
 
-    latlon <- coord(before_tw_remov$tFirst, before_tw_remov$tSecond, before_tw_remov$type, degElevation = sun, note = F)
+    latlon <- GeoLight::coord(before_tw_remov$tFirst, before_tw_remov$tSecond, before_tw_remov$type, degElevation = sun, note = F)
     basis <- cbind(before_tw_remov, latlon)
 
     if (is.null(sun_angle_start)) {
@@ -855,7 +855,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
       sun <- as.numeric(seq(sun_angle_start, sun_angle_end, length.out = length(after_tw_remov$tFirst)))
     }
 
-    latlon <- coord(after_tw_remov$tFirst, after_tw_remov$tSecond, after_tw_remov$type, degElevation = sun, note = F)
+    latlon <- GeoLight::coord(after_tw_remov$tFirst, after_tw_remov$tSecond, after_tw_remov$type, degElevation = sun, note = F)
     after <- cbind(after_tw_remov, latlon)
 
     start_aut_eq <- min(posdata$tFirst[month(posdata$tFirst) %in% c(8, 9, 10, 11) & posdata$eqfilter == 0])
@@ -908,7 +908,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
     if (!is.na(sun_angle_end)) {
       sun <- as.numeric(seq(sun_angle_start, sun_angle_end, length.out = length(before_changes$tFirst)))
     }
-    latlon <- coord(before_changes$tFirst, before_changes$tSecond, before_changes$type, degElevation = sun, note = F)
+    latlon <- GeoLight::coord(before_changes$tFirst, before_changes$tSecond, before_changes$type, degElevation = sun, note = F)
     basis <- cbind(before_changes, latlon)
 
     if (is.null(sun_angle_start)) {
@@ -926,7 +926,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
     if (!is.na(sun_angle_end)) {
       sun <- as.numeric(seq(sun_angle_start, sun_angle_end, length.out = length(after_changes$tFirst)))
     }
-    latlon <- coord(after_changes$tFirst, after_changes$tSecond, after_changes$type, degElevation = sun, note = F)
+    latlon <- GeoLight::coord(after_changes$tFirst, after_changes$tSecond, after_changes$type, degElevation = sun, note = F)
     after <- cbind(after_changes, latlon)
 
     start_aut_eq <- min(posdata$tFirst[month(posdata$tFirst) %in% c(8, 9, 10, 11) & posdata$eqfilter == 0])
@@ -1088,7 +1088,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
     par(mar = c(1.5, 2, 1.5, 1.5) + 0.1)
     i <- 1
     for (i in 1:(length(sun.angles))) {
-      latlon.sun <- coord(pos_plot$tFirst, pos_plot$tSecond, pos_plot$type, degElevation = sun.angles[i], note = F)
+      latlon.sun <- GeoLight::coord(pos_plot$tFirst, pos_plot$tSecond, pos_plot$type, degElevation = sun.angles[i], note = F)
       latlon.sun <- data.frame(cbind(pos_plot[, 1:3], latlon.sun))
 
       latlon.sun$eqfilter <- NA
@@ -1098,7 +1098,7 @@ seatrackGLS <- function(luxfile, save_sun_plots.dir, save_filter_plots.dir,
       abline(v = latlon.sun$tFirst[latlon.sun$eqfilter == 0], col = "light grey")
       # lines(latlon.sun$tFirst,latlon.sun[,5])
       latlon.sun$lat_roll4 <- NA
-      latlon.sun$lat_roll4[4:(nrow(latlon.sun) - 4)] <- rollmean(latlon.sun[, 5], 8)
+      latlon.sun$lat_roll4[4:(nrow(latlon.sun) - 4)] <- zoo::rollmean(latlon.sun[, 5], 8)
       lines(latlon.sun$tFirst, latlon.sun$lat_roll4, lwd = 1.2)
       abline(h = collat, lty = 2)
     }
