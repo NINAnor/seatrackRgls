@@ -251,10 +251,12 @@ process_light_position <- function(
 
     posdata_export <- data.frame(posdata_ds, light_data_calibration, logger_colony_info)
     posdata_export$sun_angle <- get_sun_angle_seq(posdata_export, light_data_calibration)
+    posdata_export$logger_id_year <- paste(posdata_export$logger_id[1], strsplit(posdata_export$total_years_tracked[1], "_")[[1]][2], sep = "_")
     posdata_export$script_version <- 3.0
     posdata_export <- dplyr::select(
         posdata_export,
         logger_id,
+        logger_id_year,
         total_years_tracked,
         logger_model,
         start_datetime,
@@ -431,6 +433,11 @@ handle_seasonal_calibration <- function(
     posdata_export_ws_af <- argos_filter(posdata_export_ws_sf, light_data_calibration, logger_colony_info, logger_filter)
     filtering$removed_argos_seasonal <- nrow(posdata_export_ws_sf) - nrow(posdata_export_ws_af)
     print(paste("Removed", filtering$removed_argos_seasonal, "positions during ARGOS filtering of combined seasonal positions."))
+
+    # Keep this dataframe clean
+    posdata_export_ws_af$lc <- NULL
+    posdata_export_ws_af$argosfilter1 <- NULL
+    posdata_export_ws_af$argosfilter2 <- NULL
 
     # Run land mask filter
     print("Applying land mask filter on combined seasonal positions...")

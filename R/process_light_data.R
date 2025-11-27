@@ -60,6 +60,7 @@ process_logger_light_data <- function(
         # Combine results
         combined_twilight_estimates <- do.call(rbind, lapply(all_results, function(x) x$twilight_estimates))
         combined_posdata_export <- do.call(rbind, lapply(all_results, function(x) x$posdata_export))
+        combined_posdata_export$raw_data_file <- basename(filepaths[1])
         combined_filtering <- do.call(rbind, lapply(all_results, function(x) x$filtering))
 
         return(list(

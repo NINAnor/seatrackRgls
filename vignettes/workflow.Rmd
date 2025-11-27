@@ -16,14 +16,14 @@ Extra metadata can also be provided, but isn't neccesary during the calibration 
 Run `process_folder` in calibration mode. This will export calibration plots and 
 
 ```{r calibrate}
-test_calibration <- process_folder(
-  import_directory,
-  metadata,
-  all_colony_info,
-  show_filter_plots = FALSE,
-  calibration_mode = TRUE,
+
+prepare_calibration(
+  import_directory = import_directory,
+  metadata = metadata,
+  all_colony_info = all_colony_info,
   output_dir = "test"
 )
+
 ```
 
 Stare at the plots. Use the force.
@@ -31,15 +31,16 @@ Stare at the plots. Use the force.
 ```{r run_process}
 test_dir <- "test/calibration_data"
 file_name <- list.files(test_dir)[1]
+calibration_data_path <- file.path(test_dir, file_name)
 
-process_folder(
-  import_directory,
-  file.path(test_dir, file_name),
-  all_colony_info,
-  show_filter_plots = TRUE,
-  calibration_mode = FALSE,
-  output_dir = "test"
+process_positions(
+  import_directory = import_directory,
+  calibration_data = calibration_data_path,
+  all_colony_info = all_colony_info,
+  output_dir = "test",
+  extra_metadata = extra_metadata
 )
+
 ```
 
 ```{r}

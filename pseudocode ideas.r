@@ -10,6 +10,7 @@ prepare_seatrack_colony_info <- function() {
 
 # CAN LIVE IN METADATA PACKAGE
 # SHOULD APPEND SOME KIND OF breeding_start_month, breeding_end_month
+# NEED TO MODIFY THIS TO ACCOMODATE BOTH EXISTING CALIBRATED DATA AND BASIC METADATA.
 prepare_seatrack_calibration <- function(metadata_path, split_years = "06-01") {
     metadata <- openxlsx2::read_xlsx(metadata_path)
     # convert to cleaner dataframes
@@ -69,7 +70,7 @@ metadata_path <- "C:/Users/julian.evans/Norsk Polarinstitutt/Benjamin Merkel - S
 
 all_colony_info <- prepare_seatrack_colony_info()
 result <- prepare_seatrack_calibration(metadata_path)
-calibration_data <- result$calibration_data
+# calibration_data <- result$calibration_data
 extra_metadata <- result$extra_metadata
 
 # Minimum columns in filter_list

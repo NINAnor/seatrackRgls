@@ -15,6 +15,7 @@
 #' @param filter_list A list of filter settings for different species. Defaults to `seatrack_settings_list`.
 #' @param extra_metadata A data frame containing extra metadata for all loggers.
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
+#' @param export_maps A logical indicating whether to export maps of the processed positions. Defaults to TRUE.
 #' @param plotting_dir An optional directory path to save plotting outputs. Defaults to NULL.
 #' @param output_dir An optional directory path to save processed outputs. Defaults to NULL.
 #' @param calibration_mode A logical indicating whether to run in calibration mode. Defaults to TRUE
@@ -35,6 +36,7 @@ process_logger_year <- function(
     filter_list = seatrack_settings_list,
     extra_metadata = NULL,
     show_filter_plots = FALSE,
+    export_maps = TRUE,
     plotting_dir = NULL,
     output_dir = NULL,
     calibration_mode = TRUE,
@@ -139,7 +141,7 @@ process_logger_year <- function(
             if (!dir.exists(pos_output_dir)) {
                 dir.create(pos_output_dir, recursive = TRUE)
             }
-            output_filepath <- file.path(pos_output_dir, paste0("positions_", logger_id, "_", year, ".csv"))
+            output_filepath <- file.path(pos_output_dir, paste0("positions_-_", logger_id, "_", year, ".csv"))
             write.csv(result$posdata_export, output_filepath, row.names = FALSE)
             print(paste("Exported processed positions to", output_filepath))
 
@@ -147,7 +149,7 @@ process_logger_year <- function(
             if (!dir.exists(filter_output_dir)) {
                 dir.create(filter_output_dir, recursive = TRUE)
             }
-            filter_filepath <- file.path(filter_output_dir, paste0("filtering_", logger_id, "_", year, ".csv"))
+            filter_filepath <- file.path(filter_output_dir, paste0("filtering_-_", logger_id, "_", year, ".csv"))
             write.csv(result$filtering, filter_filepath, row.names = FALSE)
             print(paste("Exported filtering summary to", filter_filepath))
 
@@ -155,9 +157,24 @@ process_logger_year <- function(
             if (!dir.exists(twilight_output_dir)) {
                 dir.create(twilight_output_dir, recursive = TRUE)
             }
-            twilight_filepath <- file.path(twilight_output_dir, paste0("twilights_", logger_id, "_", year, ".csv"))
+            twilight_filepath <- file.path(twilight_output_dir, paste0("twilights_-_", logger_id, "_", year, ".csv"))
             write.csv(result$twilight_estimates, twilight_filepath, row.names = FALSE)
             print(paste("Exported twilight estimates to", twilight_filepath))
+            if (export_maps) {
+                map_output_dir <- file.path(output_dir, "maps")
+                if (!dir.exists(map_output_dir)) {
+                    dir.create(map_output_dir, recursive = TRUE)
+                }
+
+                for (year_tracked in unique(result$posdata_export$year_tracked)) {
+                    map_filepath <- file.path(map_output_dir, paste0("map_-_", logger_id, "_", year, "_-_", year_tracked, ".png"))
+
+                    png(filename = map_filepath, height = 20, width = 20, units = "cm", res = 500)
+                    plot_a_map(result$posdata_export[result$posdata_export$year_tracked == year_tracked, ])
+                    dev.off()
+                    print(paste("Exported map to", map_filepath))
+                }
+            }
         }
     } else {
         if (!is.null(output_dir)) {
@@ -165,7 +182,7 @@ process_logger_year <- function(
             if (!dir.exists(calibration_output_dir)) {
                 dir.create(calibration_output_dir, recursive = TRUE)
             }
-            calibration_filepath <- file.path(calibration_output_dir, paste0("calibration_", logger_id, "_", year, ".csv"))
+            calibration_filepath <- file.path(calibration_output_dir, paste0("calibration_-_", logger_id, "_", year, ".csv"))
             write.csv(result, calibration_filepath, row.names = FALSE)
             print(paste("Exported calibration data to", calibration_filepath))
         }

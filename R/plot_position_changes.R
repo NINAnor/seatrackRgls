@@ -203,7 +203,7 @@ pos_change_subplot <- function(map_ver, xlim, ylim, before_pos, after_pos, befor
     if (!is.na(n_pos_removed)) {
         subtitle_string <- paste0("n pos removed: ", n_pos_removed)
     } else {
-        subtitle_string <- paste0("n pos: ", nrow(after_modified_pos))
+        subtitle_string <- paste0("n pos: ", nrow(after_pos))
     }
 
     if (!is.na(n_pos_changed)) {

@@ -45,4 +45,5 @@ plot_a_map <- function(df) {
       inset = .01, title = "Time of the year",
       c("Equinox", "May to Jul", "Aug to Oct", "Nov to Jan", "Feb to Apr", "summer_threshold", "winter_threshold"), fill = c("black", "forestgreen", "steelblue", "firebrick", "orange", "white", "violet"), horiz = FALSE, cex = 0.5
    )
+   mtext(paste(df$logger_id_year[1], df$year_tracked[1], df$species[1], df$colony[1]), line = 0.6)
 }
