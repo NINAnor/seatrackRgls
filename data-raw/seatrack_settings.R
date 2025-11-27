@@ -11,8 +11,8 @@ seatrack_settings_list <- lapply(seq_len(nrow(seatrack_settings)), function(i) {
     new_list$boundary.box <- new_list$boundary.box[[1]]
     bb <- sf::st_bbox(c(
         xmin = new_list$boundary.box[1],
-        ymin = new_list$boundary.box[2],
-        xmax = new_list$boundary.box[3],
+        xmax = new_list$boundary.box[2],
+        ymin = new_list$boundary.box[3],
         ymax = new_list$boundary.box[4]
     ))
     new_list$boundary.box <- bb

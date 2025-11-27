@@ -1,227 +1,127 @@
-#' Process all lightposition files in a folder
+#' Process all light position files in a folder
 #'
-#' WIP
-#'
-#' @param import_directory
-#' @param calibration_data
-#' @param filter_list
-#' @param all_colony_info
-#' @param extra_metadata
-process_folder <- function(import_directory, calibration_data, filter_list = seatrack_settings_list, all_colony_info, extra_metadata, show_filter_plots = FALSE, filter_plots_dir = NULL) {
-    print("Scan import directory for files...")
-    all_files <- list.files(import_directory)
-    all_files_split <- strsplit(all_files, "_")
-    file_info_list <- lapply(all_files_split, function(x) {
-        data.frame(logger_id = x[1], year_downloaded = x[2], id_year = paste(x[1], x[2]))
-    })
-    file_info <- do.call(rbind, file_info_list)
+#' Given an import directory containing light data files, calibration data, filter settings, colony info and extra metadata, this function processes all light data files in the folder.
+#' It applies calibration data, filter settings, colony info, and extra metadata as needed for each logger/year combination found in the folder.
+#' In calibration mode, it exports a combined calibration data file for all processed loggers.
+#' If not in calibration mode, it exports processed position data, filtering summaries, and twilight estimates for each logger/year combination.
+#' @param import_directory The directory containing the light data files. Files are expected to be named in the format 'logger_id'_`end_year`.
+#' @param calibration_data A data frame containing calibration data for all loggers or a string providing a filepath to read this data from. This can be from an excel file, CSV file or a directory containing multiple calibration files.
+#' In calibration mode, this dataframe can consist of a single row per logger/year combination.
+#' In calibration mode, the minimum required columns are `logger_id`, `species`, `colony`, `date_deployed` and `date_retrieved`.
+#' If not in calibration mode, the data frame is expected to be in the format output by running this function in calibration mode.
+#' @param all_colony_info A data frame containing colony information for all loggers.
+#' @param filter_list A list of filter settings for different species. Defaults to `seatrack_settings_list`.
+#' @param extra_metadata A data frame containing extra metadata for all loggers.
+#' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
+#' @param output_dir An optional directory path to save processed outputs. Defaults to NULL.
+#' @param calibration_mode A logical indicating whether to run in calibration mode. Defaults to TRUE.
+#' @return If calibration_mode is FALSE, returns nothing, but exports processed data to output_dir.
+#' If calibration_mode is TRUE, returns data frame of default calibration outputs (which will also be saved as an excel file in output_dir) and (if output_dir is not NULL) exports calibration plots.
+#' @export
+process_folder <- function(
+    import_directory, calibration_data, all_colony_info,
+    filter_list = seatrack_settings_list, extra_metadata = NULL, show_filter_plots = FALSE,
+    output_dir = NULL, calibration_mode = TRUE) {
+    if (is.character(calibration_data)) {
+        calibration_data <- read_cal_files(calibration_data)
+    }
+
+    file_info <- scan_import_dir(import_directory)
     all_logger_id_year <- file_info[!duplicated(file_info$id_year), ]
     print(paste("Found", nrow(all_logger_id_year), "unique logger ID + year combinations."))
+
+    if (is.null(calibration_data$total_years_tracked)) {
+        if (!is.null(calibration_data$date_retrieved)) {
+            calibration_id_year <- paste0(calibration_data$logger_id, "_", format(calibration_data$date_retrieved, "%Y"))
+        } else {
+            stop("Deployment and retrieval date required.")
+        }
+    } else {
+        # split total years tracked into individual years
+        retrieval_year <- sapply(strsplit(calibration_data$total_years_tracked, "_"), function(x) x[2])
+        calibration_id_year <- paste0(calibration_data$logger_id, "_", retrieval_year)
+    }
+    file_info_id_year <- paste0(all_logger_id_year$logger_id, "_", all_logger_id_year$year_downloaded)
+    # Filter this to only those with calibration data for both logger and year
+    all_logger_id_year <- all_logger_id_year[file_info_id_year %in% calibration_id_year, ]
+    print(paste("After filtering, processing", nrow(all_logger_id_year), "logger ID + year combinations with calibration data."))
+
+    if (calibration_mode) {
+        all_result <- list()
+        folder_result_output_dir <- NULL
+    } else {
+        folder_result_output_dir <- output_dir
+    }
 
     for (logger_idx in seq_len(nrow(all_logger_id_year))) {
         logger_id <- all_logger_id_year$logger_id[logger_idx]
         year <- all_logger_id_year$year_downloaded[logger_idx]
-        process_logger_year(logger_id, year, import_directory, all_files, calibration_data, filter_list, all_colony_info, extra_metadata, show_filter_plots, filter_plots_dir)
-    }
-}
-
-process_logger_year <- function(logger_id, year, import_directory, all_files, calibration_data, filter_list = seatrack_settings_list, all_colony_info, extra_metadata,
-    show_filter_plots = FALSE, filter_plots_dir = NULL){
-        print(paste("Processing logger", logger_id, "for year", year))
-        files <- all_files[file_info$logger_id == logger_id & file_info$year_downloaded == year]
-        filepaths <- file.path(import_directory, files)
-
-        calibration_year <- format(calibration_data$end_datetime, "%Y")
-        extra_metadata_year <- format(extra_metadata$retrieval_date, "%Y")
-
-        logger_calibration_data <- calibration_data[calibration_data$logger_id == logger_id & calibration_year == year, ]
-        logger_extra_metadata <- extra_metadata[extra_metadata$logger_id == logger_id & extra_metadata_year == year, ]
-        logger_colony_info <- all_colony_info[all_colony_info$colony == logger_calibration_data$colony[1], ]
-        logger_filter <- filter_list[[tolower(logger_calibration_data$species)]]
-        track <- process_light_positions(filepaths, logger_calibration_data, logger_filter, logger_colony_info, logger_extra_metadata, show_filter_plots, filter_plots_dir)
-}
-
-process_light_positions <- function(filepaths, logger_calibration_data, logger_filter, logger_colony_info, logger_extra_metadata, 
-    show_filter_plots = FALSE, filter_plots_dir = NULL) {
-    logger_calibration_data$sun_angle_start[is.na(logger_calibration_data$sun_angle_start)] <- -3.5
-    logger_calibration_data$sun_angle_end[is.na(logger_calibration_data$sun_angle_end)] <- -logger_calibration_data$sun_angle_start[is.na(logger_calibration_data$sun_angle_end)]
-    logger_calibration_data$light_threshold[is.na(logger_calibration_data$light_threshold)] <- 1
-    
-    if(is.null(logger_calibration_data$noon_filter)){
-        logger_calibration_data$noon_filter <- TRUE
-    }
-    if(is.null(logger_calibration_data$daylength_filter)){
-        logger_calibration_data$daylength_filter <- TRUE
-    }
-
-
-    if(!is.null(filter_plots_dir) && !dir.exists(filter_plots_dir)) {
-        dir.create(filter_plots_dir, recursive = TRUE)
-    }
-
-    print("Load light data...")
-    all_light_data <- get_light_data(filepaths)
-    print("Limit light data to calibration time windows...")
-    light_data_split <- limit_light_data(all_light_data, logger_calibration_data)
-
-    all_filters <- data.frame()
-    
-    for (i in seq_along(light_data_split)) {
-        print(paste("Processing calibration window", i, "of", nrow(logger_calibration_data)))
-        light_data <- light_data_split[[i]]
-        light_data_calibration <- logger_calibration_data[i, ]
-        if (!is.null(light_data_calibration$breeding_start_month)) {
-            print("Using breeding months from calibration data")
-            months_breeding <- get_breeding_month_seq(light_data_calibration$breeding_start_month, light_data_calibration$breeding_end_month)
-        } else {
-            print("Using breeding months from filter settings")
-            months_breeding <- logger_filter$months_breeding
-        }
-
-        filtering <- data.frame(
-            logger_id = light_data_calibration$logger_id,
-            start_datetime = light_data_calibration$start_datetime,
-            end_datetime = light_data_calibration$end_datetime
+        result <- process_logger_year(
+            logger_id = logger_id,
+            year = year,
+            import_directory = import_directory,
+            calibration_data = calibration_data,
+            filter_list = filter_list,
+            all_colony_info = all_colony_info,
+            extra_metadata = extra_metadata,
+            show_filter_plots = show_filter_plots,
+            plotting_dir = output_dir,
+            output_dir = folder_result_output_dir,
+            calibration_mode = calibration_mode
         )
-
-        logger_id_year <- paste0(light_data_calibration$logger_id, "_", format(light_data_calibration$start_datetime, "%Y"))
-
-        # Estimate twilights
-        print("Estimating twilights...")
-        twilight_data <- 
-        export_filter_plot({
-            twilight_estimation(light_data, light_data_calibration)
-        }, 
-        show_filter_plots, 
-        plot_name = "1_twilight_estimation", 
-        logger_id_year = logger_id_year, 
-        filter_plots_dir)
-        
-        filtering$nrow_twilightCalc <- nrow(twilight_data)
-        print(paste("Estimated", filtering$nrow_twilightCalc, "twilights."))
-
-        # Add sun angle etc. to twilight data
-        twilight_data <- data.frame(twilight_data, light_data_calibration[, c("sun_angle_start", "sun_angle_end", "light_threshold")])
-
-        # Removes twilights of the same type less than 22 hours apart (tc)
-        print("Cleaning twilight data...")
-        twilight_data_tc <- export_filter_plot({
-            twilight_cleanup(
-            df = twilight_data,
-            breedingloc_lon = logger_colony_info$col_lon,
-            breedingloc_lat = logger_colony_info$col_lat,
-            months_breeding = months_breeding,
-            species = light_data_calibration$species,
-            sun_angle_start = light_data_calibration$sun_angle_start,
-            sun_angle_end = light_data_calibration$sun_angle_end,
-            show_plot = show_filter_plots
-        )},
-        show_filter_plots, 
-        plot_name = "2_twilight_cleanup", 
-        logger_id_year = logger_id_year, 
-        filter_plots_dir)
-
-        # keep track of n edited twilights/filtered positions
-        filtering$removed_twilight_cleanup <- (filtering$nrow_twilightCalc - nrow(twilight_data_tc))
-        print(paste("Removed", filtering$removed_twilight_cleanup, "twilights during cleanup."))
-
-        # detect outliers and move them back to mean of their neighbors
-        twilight_data_mt <- 
-        export_filter_plot({
-            move_twilights(
-            df = twilight_data_tc,
-            speed = logger_filter$speed,
-            sun = sun_angle_seq(twilight_data_tc, light_data_calibration),
-            show_plot = show_filter_plots
-        )},
-        show_filter_plots, 
-        plot_name = "3_twilight_move", 
-        logger_id_year = logger_id_year, 
-        filter_plots_dir)
-
-        filtering$moved_twilight_positions <- nrow(twilight_data_mt[!(twilight_data_tc$tFirst %in% twilight_data_mt$tFirst), ])
-        print(paste("Moved", filtering$moved_twilight_positions, "twilight positions."))
-
-        # daylengthfilter
-        if(light_data_calibration$daylength_filter){
-            twilight_data_dl <- 
-            export_filter_plot({
-                daylengthfilter(df = twilight_data_mt, show_plot = show_filter_plots)
-            },
-            show_filter_plots, 
-            plot_name = "4_daylength", 
-            logger_id_year = logger_id_year, 
-            filter_plots_dir)
-        } else{
-            twilight_data_dl <- twilight_data_mt
+        if (calibration_mode) {
+            all_result <- c(all_result, list(result))
         }
-        filtering$removed_daylengthfilter <- (nrow(twilight_data_mt) - nrow(twilight_data_dl))
-        print(paste("Removed", filtering$removed_daylengthfilter, "twilights during daylength filtering."))
-
-        # noonfilter
-        if(light_data_calibration$noon_filter){
-            twilight_data_nf <- 
-            export_filter_plot({
-                noonfilter(df = twilight_data_dl, show_plot = show_filter_plots)
-            },
-            show_filter_plots, 
-            plot_name = "5_noonfilter", 
-            logger_id_year = logger_id_year, 
-            filter_plots_dir)
-        }else{
-            twilight_data_nf <- twilight_data_dl
+    }
+    if (calibration_mode) {
+        calibration_output_dir <- file.path(output_dir, "calibration_data")
+        if (!dir.exists(calibration_output_dir)) {
+            dir.create(calibration_output_dir, recursive = TRUE)
         }
-        filtering$removed_noonfilter <- (nrow(twilight_data_dl) - nrow(twilight_data_nf))
-        print("Removed", filtering$removed_noonfilter, "twilights during noon filtering.")
-
-        # CALCULATE POSITIONS---------------------------------
-        latlon <- GeoLight::coord(twilight_data_nf$tFirst, 
-                                    twilight_data_nf$tSecond, 
-                                    twilight_data_nf$type, 
-                                    degElevation = sun_angle_seq(twilight_data_nf, light_data_calibration), 
-                                    note = F)
-        
-        postab <- data.frame(twilight_data_nf, latlon)
-        print(paste("Calculated", nrow(postab), "positions."))
-
-        # Temp smoothing x 2---------------------
-        posdata <- double_smoothing(df = postab, sun = sun_angle_seq(postab, light_data_calibration))
-        print("Applied double smoothing to positions.")
-        # Equinox-filter ---------------------
-        if(is.null(light_data_calibration$spring_eq_start)){
-            posdata$eqfilter <- assign_equinox_periods(lats = posdata$lat_smooth2, 
-            dates = posdata$tFirst, 
-            breedingloc_lat = logger_colony_info$col_lat, 
-            sun = sun_angle_seq(posdata, light_data_calibration))
-        }else{
-            posdata$eqfilter <- TRUE
-            posdata$eqfilter[posdata$date_time >= light_data_calibration$spring_eq_start & posdata$date_time <= light_data_calibration$spring_eq_end] <- FALSE
-            posdata$eqfilter[posdata$date_time >= light_data_calibration$aut_eq_start & posdata$date_time <= light_data_calibration$aut_eq_end] <- FALSE
-        }
-
-        # Speed filtering --------------------
-        posdata_sf <- speed_filter(posdata, logger_filter$speed)
-        filtering$removed_speed <- nrow(posdata) - nrow(posdata_sf)
-        print(paste("Removed", filtering$removed_speed, "positions during speed filtering."))
-    
-        # BOUNDARY BOX---------------------------------
-        posdata_bb <- bounding_box_filter(posdata_sf, light_data_calibration, logger_filter)
-        filtering$removed_boundbox <- nrow(posdata_sf) - nrow(posdata_bb)
-        print(paste("Removed", filtering$removed_boundbox, "positions outside boundary box."))
-
-        # ARGOSFILTER---------------------------------
-        posdata_argos <- argos_filter(posdata_bb, light_data_calibration, logger_colony_info, logger_filter) 
-        filtering$removed_argos <- nrow(posdata_bb) - nrow(posdata_argos)
-        print(paste("Removed", filtering$removed_argos, "positions during ARGOS filtering."))
-
+        calibration_filepath <- file.path(calibration_output_dir, paste0("calibration_", Sys.Date(), ".xlsx"))
+        all_calibration <- do.call(rbind, all_result)
+        # do some workbook formattign to make it easier to fill in
+        calibration_to_wb(all_calibration, calibration_filepath)
+        print(paste("Exported calibration data to", calibration_filepath))
+        return(all_calibration)
     }
 }
 
-sun_angle_seq <- function (data, light_data_calibration){
-    sun <- seq(light_data_calibration$sun_angle_start, light_data_calibration$sun_angle_end, length.out = nrow(data))
-    return(sun)
+calibration_to_wb <- function(all_calibration, calibration_filepath) {
+    wb <- openxlsx2::wb_workbook()
+    wb$add_worksheet("calibration_data")
+    wb$add_data_table(sheet = "calibration_data", x = all_calibration, banded_rows = TRUE, table_style = "TableStyleMedium19")
+    wb$set_col_widths(sheet = "calibration_data", cols = 1:ncol(all_calibration), widths = "auto")
+    wb$freeze_pane(sheet = "calibration_data", firstActiveRow = 2, firstActiveCol = 5)
+    wb$save(file = calibration_filepath, overwrite = TRUE)
 }
 
+read_cal_file <- function(f) {
+    ext <- tolower(tools::file_ext(f))
+    if (ext == "xlsx") {
+        openxlsx2::wb_to_df(f)
+    } else if (ext == "csv") {
+        utils::read.csv(f, stringsAsFactors = FALSE)
+    } else {
+        NULL
+    }
+}
 
+read_cal_files <- function(calibration_data){
+    files <- if (dir.exists(calibration_data)) {
+        list.files(calibration_data, full.names = TRUE)
+    } else {
+        calibration_data
+    }
+    files <- files[file.exists(files)]
+    if (length(files) == 0) stop("No calibration files found at path provided.")
 
+    dfs <- lapply(files, function(f) {
+        df <- read_cal_file(f)
+        if (is.null(df)) warning("Skipping unsupported calibration file: ", f)
+        df
+    })
+    calibration_data <- do.call(rbind, dfs[!vapply(dfs, is.null, logical(1))])
+    return(calibration_data)
+}
 

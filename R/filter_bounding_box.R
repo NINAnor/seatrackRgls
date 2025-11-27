@@ -13,15 +13,15 @@ bounding_box_filter <- function(posdata, light_data_calibration, logger_filter){
         }
 
         # adapt coordinates to Pacific birds
-        if (boundary.box[2] > 180 || boundary.box[1] > 180) posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] <- posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] + 360
+        if (boundary.box$xmin > 180 || boundary.box$xmax > 180) posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] <- posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] + 360
 
         posdata$lon_filter <- TRUE
         posdata$lat_filter <- TRUE
 
-        posdata$lon_filter[posdata$lon > boundary.box[2]] <- FALSE
-        posdata$lon_filter[posdata$lon < boundary.box[1]] <- FALSE
-        posdata$lat_filter[posdata$lat < boundary.box[3]] <- FALSE
-        posdata$lat_filter[posdata$lat > boundary.box[4]] <- FALSE
+        posdata$lon_filter[posdata$lon > boundary.box$xmax] <- FALSE
+        posdata$lon_filter[posdata$lon < boundary.box$xmin] <- FALSE
+        posdata$lat_filter[posdata$lat < boundary.box$ymin] <- FALSE
+        posdata$lat_filter[posdata$lat > boundary.box$ymax] <- FALSE
 
         posdata$tFirst[!posdata$lon_filter] <- NA
         posdata$tFirst[!posdata$lat_filter & posdata$eqfilter] <- NA
@@ -32,7 +32,7 @@ bounding_box_filter <- function(posdata, light_data_calibration, logger_filter){
         posdata$lon_filter <- NULL
         posdata$lat_filter <- NULL
 
-        if (boundary.box[2] > 180 || boundary.box[1] > 180) posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] <- posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] - 360
+        if (boundary.box$xmin > 180 || boundary.box$xmax > 180) posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] <- posdata$lon[!is.na(posdata$lon) & posdata$lon < 0] - 360
 
         return (posdata)
 

@@ -1,5 +1,5 @@
 #' @return a dataframe where the first two columns indicate timing of twilight events and a column type, where type == 1 indicates that tFirst is sunrise and type == 2 indicates that tFirst is sunset.
-twilight_estimation <- function(light_data, light_data_calibration) {
+twilight_estimation <- function(light_data, light_data_calibration, show_filter_plots = FALSE) {
     # define recording interval:
     # Median difference between one light reading and the next
     light_interval <- median(difftime(light_data$dtime[2:nrow(light_data)], light_data$dtime[1:(nrow(light_data) - 1)], units = "mins"))
@@ -39,13 +39,14 @@ twilight_estimation <- function(light_data, light_data_calibration) {
             maxLight = light_interval
         )
     }
-
-    plot_twilight_data(
-        twilight_data, 
-        light_data, 
-        light_threshold = light_data_calibration$light_threshold, 
-        light_intervals = light_interval
-    )
+    if (show_filter_plots) {
+        plot_twilight_data(
+            twilight_data,
+            light_data,
+            light_threshold = light_data_calibration$light_threshold,
+            light_intervals = light_interval
+        )
+    }
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # advance sunset (shorten twilightCalc's advance by 1 minute,
@@ -71,7 +72,7 @@ plot_twilight_data <- function(twilight_data, light_data, light_threshold = NULL
     plot(no_preselect$tFirst, no_preselect$hours, col = "firebrick", ylim = c(0, 26), ann = FALSE, pch = 19, yaxt = "none", xaxt = "none", cex = 0.3)
     mtext(side = 1, text = "Month", line = 1, cex = 0.7)
     mtext(side = 2, text = "Time of day (GMT)", line = 1, cex = 0.7)
-    
+
     points(with_preslect$tFirst[with_preslect$type == 2], with_preslect$hours[with_preslect$type == 2], col = "cornflowerblue", pch = 19, cex = 0.3)
     points(with_preslect$tFirst[with_preslect$type == 1], with_preslect$hours[with_preslect$type == 1], col = "lightblue", pch = 19, cex = 0.3)
     daterange <- c(as.POSIXlt(min(with_preslect$tFirst)), as.POSIXlt(max(with_preslect$tFirst)))
@@ -79,5 +80,3 @@ plot_twilight_data <- function(twilight_data, light_data, light_threshold = NULL
     axis(side = 2, at = c(1:24), labels = c(1:24), tck = -0.02, cex.axis = 0.6, las = 2, mgp = c(3, 0.3, 0))
     legend("top", legend = c("sunrise", "sunset", "ignored"), horiz = TRUE, col = c("lightblue", "cornflowerblue", "firebrick"), pch = 19, cex = 0.3)
 }
-
- 

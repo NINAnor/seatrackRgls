@@ -12,12 +12,16 @@ aut_midnight_sun_removal <- function(df) {
   tail_tmp$tFirst_start3 <- tail_tmp$tFirst
   tail_tmp$tFirst_stop3 <- tail_tmp$tFirst # tail_tmp$tFirst
 
-  for (i in 1:(as.numeric(length(tail_tmp$tSecond)))) {
+  for (i in 1:(as.numeric(length(tail_tmp$tSecond) - 2))) {
     tail_tmp$tFirst_start3[i] <- tail_tmp$tFirst[i + 2]
   }
+
   tail_tmp$diff_positions_start <- difftime(tail_tmp$tFirst, tail_tmp$tFirst_start3, units = "hours")
-  for (i in 1:(as.numeric(length(tail_tmp$tSecond)))) {
-    ifelse(length(tail_tmp$tFirst[i - 2]) == 0, tail_tmp$tFirst_stop3[i] <- NA, tail_tmp$tFirst_stop3[i] <- tail_tmp$tFirst[i - 2])
+
+  for (i in 3:(as.numeric(length(tail_tmp$tSecond)))) {
+    ifelse(length(tail_tmp$tFirst[i - 2]) == 0, 
+    tail_tmp$tFirst_stop3[i] <- NA, 
+    tail_tmp$tFirst_stop3[i] <- tail_tmp$tFirst[i - 2])
   }
 
   tail_tmp$tFirst_stop3[1] <- NA
@@ -27,10 +31,10 @@ aut_midnight_sun_removal <- function(df) {
   tail_tmp <- tail_tmp[!is.na(tail_tmp$diff_positions_stop), ]
   tail_tmp$diff_positions_stop_minus1 <- NA
 
-  for (i in 1:(as.numeric(length(tail_tmp$tSecond)))) {
+  for (i in 1:(as.numeric(length(tail_tmp$tSecond)-1))) {
     tail_tmp$diff_positions_start_plus1[i] <- tail_tmp$diff_positions_start[i + 1]
   }
-  for (i in 1:(as.numeric(length(tail_tmp$tSecond)))) {
+  for (i in 2:(as.numeric(length(tail_tmp$tSecond)))) {
     ifelse(length(tail_tmp$tFirst[i - 1]) == 0, tail_tmp$diff_positions_stop_minus1[i] <- NA, tail_tmp$diff_positions_stop_minus1[i] <- tail_tmp$diff_positions_stop[i - 1])
   }
 
@@ -53,7 +57,7 @@ aut_midnight_sun_removal <- function(df) {
   df <- df[df$conf == 9, ]
 
 
-  df <- df[c(1:8)]
+  # df <- df[c(1:8)]
 
   output <- na.omit(df)
   return(output)

@@ -1,5 +1,4 @@
-speed_filter <- function(posdata, speed){
-
+speed_filter <- function(posdata, speed) {
     i.get.outliers <- function(residuals, k = 3) {
         x <- residuals
         # x is a vector of residuals

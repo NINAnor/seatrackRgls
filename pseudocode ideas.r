@@ -3,20 +3,14 @@ library(sf)
 
 # CAN LIVE IN METADATA PACKAGE
 prepare_seatrack_colony_info <- function() {
-    all_colony_info <- getColonies(loadGeometries = TRUE)
-    # until I fix getColonies
-    coords <- as.data.frame(st_coordinates(all_colony_info$geom))
-    names(coords) <- c("col_lon", "col_lat")
-    all_colony_info <- data.frame(all_colony_info, coords)
-    # end until I fix getColonies
-    all_colony_info <- data.frame(colony = all_colony_info$colony_int_name, col_lat = all_colony_info$col_lat, col_lon = all_colony_info$col_lon)
+    all_colony_info <- getColonies()
+    all_colony_info <- data.frame(colony = all_colony_info$colony_int_name, col_lat = all_colony_info$lat, col_lon = all_colony_info$lon)
     return(all_colony_info)
 }
 
 # CAN LIVE IN METADATA PACKAGE
 # SHOULD APPEND SOME KIND OF breeding_start_month, breeding_end_month
 prepare_seatrack_calibration <- function(metadata_path, split_years = "06-01") {
-    filter_settings <- seatrackRgls::seatrack_settings_list
     metadata <- openxlsx2::read_xlsx(metadata_path)
     # convert to cleaner dataframes
     calibration_data <- metadata[, c("logger_id", "logger_model", "species", "date_deployed", "date_retrieved", "colony", "sun_angle_start", "sun_angle_end", "light_threshold", "analyzer")]
@@ -77,3 +71,10 @@ all_colony_info <- prepare_seatrack_colony_info()
 result <- prepare_seatrack_calibration(metadata_path)
 calibration_data <- result$calibration_data
 extra_metadata <- result$extra_metadata
+
+# Minimum columns in filter_list
+# logger_id, logger_model, species, colony
+# if start_datetime is not provided, deployment and retrieval must be provided
+
+metadata <- openxlsx2::read_xlsx(metadata_path)
+metadata <- metadata[!is.na(metadata$logger_id) & !duplicated(metadata$logger_id), c("logger_id", "logger_model", "date_deployed", "date_retrieved", "colony", "species")]

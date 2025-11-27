@@ -1,0 +1,50 @@
+---
+title:"seatrackGLS workflow tutorial"
+output:
+  html_document:
+  date:"2025-11-26"
+---
+
+Prepare colony metadata, basic metadata for calibration. Basic metadata must have
+logger_id, logger_model, species, colony, deployment_date, retrieval_date. 
+Extra metadata can also be provided, but isn't neccesary during the calibration step.
+
+```{r setup}
+
+```
+
+Run `process_folder` in calibration mode. This will export calibration plots and 
+
+```{r calibrate}
+test_calibration <- process_folder(
+  import_directory,
+  metadata,
+  all_colony_info,
+  show_filter_plots = FALSE,
+  calibration_mode = TRUE,
+  output_dir = "test"
+)
+```
+
+Stare at the plots. Use the force.
+
+```{r run_process}
+test_dir <- "test/calibration_data"
+file_name <- list.files(test_dir)[1]
+
+process_folder(
+  import_directory,
+  file.path(test_dir, file_name),
+  all_colony_info,
+  show_filter_plots = TRUE,
+  calibration_mode = FALSE,
+  output_dir = "test"
+)
+```
+
+```{r}
+test_output_dir <- "test/processed_positions"
+position_file_name <- file_name <- list.files(test_output_dir)[1]
+positions <- read.csv(file.path(test_output_dir, position_file_name))
+plot_a_map(positions)
+```
