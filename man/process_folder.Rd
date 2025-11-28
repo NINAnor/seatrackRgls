@@ -2,16 +2,46 @@
 % Please edit documentation in R/process_folder.R
 \name{process_folder}
 \alias{process_folder}
-\title{Process all lightposition files in a folder}
+\title{Process all light position files in a folder}
 \usage{
 process_folder(
   import_directory,
   calibration_data,
-  filter_list = seatrack_settings_list,
   all_colony_info,
-  extra_metadata
+  filter_list = seatrack_settings_list,
+  extra_metadata = NULL,
+  show_filter_plots = FALSE,
+  output_dir = NULL,
+  calibration_mode = TRUE
 )
 }
+\arguments{
+\item{import_directory}{The directory containing the light data files. Files are expected to be named in the format 'logger_id'_`end_year`.}
+
+\item{calibration_data}{A data frame containing calibration data for all loggers or a string providing a filepath to read this data from. This can be from an excel file, CSV file or a directory containing multiple calibration files.
+In calibration mode, this dataframe can consist of a single row per logger/year combination.
+In calibration mode, the minimum required columns are `logger_id`, `species`, `colony`, `date_deployed` and `date_retrieved`.
+If not in calibration mode, the data frame is expected to be in the format output by running this function in calibration mode.}
+
+\item{all_colony_info}{A data frame containing colony information for all loggers.}
+
+\item{filter_list}{A list of filter settings for different species. Defaults to `seatrack_settings_list`.}
+
+\item{extra_metadata}{A data frame containing extra metadata for all loggers.}
+
+\item{show_filter_plots}{A logical indicating whether to show filter plots. Defaults to FALSE.}
+
+\item{output_dir}{An optional directory path to save processed outputs. Defaults to NULL.}
+
+\item{calibration_mode}{A logical indicating whether to run in calibration mode. Defaults to TRUE.}
+}
+\value{
+If calibration_mode is FALSE, returns nothing, but exports processed data to output_dir.
+If calibration_mode is TRUE, returns data frame of default calibration outputs (which will also be saved as an excel file in output_dir) and (if output_dir is not NULL) exports calibration plots.
+}
 \description{
-WIP
+Given an import directory containing light data files, calibration data, filter settings, colony info and extra metadata, this function processes all light data files in the folder.
+It applies calibration data, filter settings, colony info, and extra metadata as needed for each logger/year combination found in the folder.
+In calibration mode, it exports a combined calibration data file for all processed loggers.
+If not in calibration mode, it exports processed position data, filtering summaries, and twilight estimates for each logger/year combination.
 }
