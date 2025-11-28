@@ -91,8 +91,40 @@ calibration_to_wb <- function(all_calibration, calibration_filepath) {
     wb <- openxlsx2::wb_workbook()
     wb$add_worksheet("calibration_data")
     wb$add_data_table(sheet = "calibration_data", x = all_calibration, banded_rows = TRUE, table_style = "TableStyleMedium19")
+    # wb$add_data(sheet = "calibration_data", x = all_calibration)
     wb$set_col_widths(sheet = "calibration_data", cols = 1:ncol(all_calibration), widths = "auto")
     wb$freeze_pane(sheet = "calibration_data", firstActiveRow = 2, firstActiveCol = 5)
+    col_dims <- openxlsx2::wb_dims(
+        x = all_calibration,
+        cols = c("sun_angle_start"), select = "col_names"
+    )
+
+    col_letters <- sapply(strsplit(col_dims, ","), function(x) gsub("[[:digit:]]+", "", x))
+
+    cf_formula <- sprintf('$%s2<>""', col_letters[1])
+
+    tryCatch(
+        {
+            suppressWarnings(
+                wb$add_dxfs_style(
+                    "seatrack_pos",
+                    fontColour = openxlsx2::wb_color(hex = "#006100"),
+                    bgFill = openxlsx2::wb_color("#C6EFCE")
+                )
+            )
+        },
+        error = function(e) {
+            invisible(NULL)
+        }
+    )
+
+    wb$add_conditional_formatting(
+        "calibration_data",
+        dims = openxlsx2::wb_dims(x = all_calibration, select = "data"),
+        rule = cf_formula,
+        style = "seatrack_pos"
+    )
+
     wb$save(file = calibration_filepath, overwrite = TRUE)
 }
 
