@@ -51,7 +51,7 @@ process_logger_light_data <- function(
             plotting_dir,
             calibration_mode = calibration_mode
         )
-
+        result <- result[!sapply(result, is.null)]
         all_results <- c(all_results, list(result))
     }
 

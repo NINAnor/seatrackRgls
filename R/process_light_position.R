@@ -46,9 +46,11 @@ process_light_position <- function(
 
 
     if (is.na(light_data_calibration$sun_angle_start)) {
-        calibration_mode <- TRUE
         if (type != "main") {
             stop("Provide manual calibration values before continuing.")
+        }else if(!calibration_mode){
+            print("Skipping due to lack of calibration values.")
+            return(NULL)
         }
     }
 
