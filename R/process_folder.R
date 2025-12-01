@@ -105,7 +105,7 @@ calibration_to_wb <- function(all_calibration, calibration_output_dir, calibrati
 
     wb <- openxlsx2::wb_workbook()
     wb$add_worksheet("calibration_data")
-    wb$add_data_table(sheet = "calibration_data", x = all_calibration, banded_rows = TRUE, table_style = "TableStyleMedium19")
+    wb$add_data_table(sheet = "calibration_data", x = all_calibration, banded_rows = TRUE, table_style = "TableStyleMedium19", na.strings = "")
     # wb$add_data(sheet = "calibration_data", x = all_calibration)
     wb$set_col_widths(sheet = "calibration_data", cols = 1:ncol(all_calibration), widths = "auto")
     wb$freeze_pane(sheet = "calibration_data", firstActiveRow = 2, firstActiveCol = 5)
@@ -140,7 +140,7 @@ calibration_to_wb <- function(all_calibration, calibration_output_dir, calibrati
         style = "seatrack_pos"
     )
 
-    wb$save(file = calibration_filepath, overwrite = TRUE)
+    wb$save(file = calibration_filepath, overwrite = TRUE, )
 }
 
 read_cal_file <- function(f) {

@@ -348,8 +348,8 @@ process_light_position <- function(
                 logger_id_year = logger_id_year,
                 plotting_dir = plotting_dir
             )
-            light_data_calibration$sun_angle_start <- ""
-            light_data_calibration$sun_angle_end <- ""
+            light_data_calibration$sun_angle_start <- NA
+            light_data_calibration$sun_angle_end <- NA
         }
         return(light_data_calibration)
     }
