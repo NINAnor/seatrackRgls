@@ -65,7 +65,7 @@ process_logger_year <- function(
         calibration_data$logger_model <- ""
     }
 
-    filepaths <- file.path(import_directory, files)
+    filepaths <- files
 
     logger_calibration_data <- calibration_data[calibration_data$logger_id == logger_id, ]
 

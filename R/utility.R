@@ -89,8 +89,8 @@ get_boundary_box <- function(light_data_calibration, logger_filter) {
 
 scan_import_dir <- function(import_directory) {
     print("Scan import directory for files...")
-    all_files <- list.files(import_directory, pattern = "*.lux|*.lig")
-    all_files_split <- strsplit(all_files, "_")
+    all_files <- list.files(import_directory, pattern = "*.lux|*.lig", recursive = TRUE, full.names = TRUE)
+    all_files_split <- strsplit(basename(all_files), "_")
     file_info_list <- lapply(all_files_split, function(x) {
         data.frame(logger_id = x[1], year_downloaded = x[2], id_year = paste(x[1], x[2]))
     })
