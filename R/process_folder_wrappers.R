@@ -4,19 +4,24 @@
 #' @param metadata Data frame containing simple metadata for loggers.
 #' @param all_colony_info Data frame containing colony information.
 #' @param output_directory Directory to save processed position outputs.
+#' @param export_calibration_template A logical indicating whether to export a calibration template. Defaults to TRUE.
 #' @export
 prepare_calibration <- function(
     import_directory,
     metadata,
-    all_colony_info, output_directory) {
+    all_colony_info, output_directory, export_calibration_template = TRUE) {
     calibration_template <- process_folder(
         import_directory = import_directory,
         calibration_data = metadata,
         all_colony_info = all_colony_info,
         output_dir = output_directory,
         show_filter_plots = FALSE,
-        calibration_mode = TRUE
+        calibration_mode = TRUE,
+        export_calibration_template = export_calibration_template
     )
+    if (!export_calibration_template) {
+        return(calibration_template)
+    }
 }
 
 #' Process Positions from a Folder

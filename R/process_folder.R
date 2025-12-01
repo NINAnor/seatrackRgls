@@ -15,13 +15,17 @@
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
 #' @param output_dir An optional directory path to save processed outputs. Defaults to NULL.
 #' @param calibration_mode A logical indicating whether to run in calibration mode. Defaults to TRUE.
+#' If TRUE, the function exports a combined calibration data file for all processed loggers.
+#' If FALSE, the function exports processed position data, filtering summaries, and twilight estimates for
+#' each logger/year combination.
+#' @param export_calibration_template A logical indicating whether to export an excel calibration template. Defaults to TRUE.
 #' @return If calibration_mode is FALSE, returns nothing, but exports processed data to output_dir.
 #' If calibration_mode is TRUE, returns data frame of default calibration outputs (which will also be saved as an excel file in output_dir) and (if output_dir is not NULL) exports calibration plots.
 #' @export
 process_folder <- function(
     import_directory, calibration_data, all_colony_info,
     filter_list = seatrack_settings_list, extra_metadata = NULL, show_filter_plots = FALSE,
-    output_dir = NULL, calibration_mode = TRUE) {
+    output_dir = NULL, calibration_mode = TRUE, export_calibration_template = TRUE) {
     if (is.character(calibration_data)) {
         calibration_data <- read_cal_files(calibration_data)
     }
@@ -74,20 +78,31 @@ process_folder <- function(
         }
     }
     if (calibration_mode) {
-        calibration_output_dir <- file.path(output_dir, "calibration_data")
-        if (!dir.exists(calibration_output_dir)) {
-            dir.create(calibration_output_dir, recursive = TRUE)
-        }
-        calibration_filepath <- file.path(calibration_output_dir, paste0("calibration_", Sys.Date(), ".xlsx"))
         all_calibration <- do.call(rbind, all_result)
-        # do some workbook formattign to make it easier to fill in
-        calibration_to_wb(all_calibration, calibration_filepath)
-        print(paste("Exported calibration data to", calibration_filepath))
+        if (export_calibration_template) {
+            # do some workbook formattign to make it easier to fill in
+            calibration_output_dir <- file.path(output_dir, "calibration_data")
+            calibration_to_wb(all_calibration, calibration_output_dir)
+            print(paste("Exported calibration data to", calibration_filepath))
+        }
         return(all_calibration)
     }
 }
 
-calibration_to_wb <- function(all_calibration, calibration_filepath) {
+#' Write Calibration Data to Excel Workbook
+#'
+#' Writes the provided calibration data frame to an Excel workbook with formatting.
+#' @param all_calibration Data frame containing calibration data for all loggers.
+#' @param calibration_output_dir Directory to save the calibration Excel workbook.
+#' @param calibration_filename Name of the calibration Excel file. Defaults to "calibration_<current_date>.xlsx".
+#' @return None. Saves the calibration data to an Excel workbook at the specified file path.
+#' @export
+calibration_to_wb <- function(all_calibration, calibration_output_dir, calibration_filename = paste0("calibration_", Sys.Date(), ".xlsx")) {
+    if (!dir.exists(calibration_output_dir)) {
+        dir.create(calibration_output_dir, recursive = TRUE)
+    }
+    calibration_filepath <- file.path(calibration_output_dir, calibration_filename)
+
     wb <- openxlsx2::wb_workbook()
     wb$add_worksheet("calibration_data")
     wb$add_data_table(sheet = "calibration_data", x = all_calibration, banded_rows = TRUE, table_style = "TableStyleMedium19")
@@ -139,7 +154,7 @@ read_cal_file <- function(f) {
     }
 }
 
-read_cal_files <- function(calibration_data){
+read_cal_files <- function(calibration_data) {
     files <- if (dir.exists(calibration_data)) {
         list.files(calibration_data, full.names = TRUE)
     } else {
@@ -156,4 +171,3 @@ read_cal_files <- function(calibration_data){
     calibration_data <- do.call(rbind, dfs[!vapply(dfs, is.null, logical(1))])
     return(calibration_data)
 }
-
