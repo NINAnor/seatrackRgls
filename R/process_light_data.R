@@ -5,7 +5,7 @@
 #'
 #' @param filepaths A vector of file paths to the light data files.
 #' @param logger_calibration_data A data frame containing calibration data for the logger. If multiple calibration windows are provided, each will be processed in sequence.
-#' @param logger_filter A list of filter settings specific to the logger species. Defaults to `seatrack_settings_list`.
+#' @param logger_filter A list of filter settings specific to the logger species.
 #' @param logger_colony_info A data frame containing colony information for the logger.
 #' @param logger_extra_metadata A data frame containing extra metadata for the logger.
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.

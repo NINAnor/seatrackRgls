@@ -8,7 +8,7 @@ process_folder(
   import_directory,
   calibration_data,
   all_colony_info,
-  filter_list = seatrack_settings_list,
+  filter_list = seatrackRgls::seatrack_settings_list,
   extra_metadata = NULL,
   show_filter_plots = FALSE,
   output_dir = NULL,

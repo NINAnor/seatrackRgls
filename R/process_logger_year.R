@@ -33,7 +33,7 @@ process_logger_year <- function(
     import_directory,
     calibration_data,
     all_colony_info,
-    filter_list = seatrack_settings_list,
+    filter_list = seatrackRgls::seatrack_settings_list,
     extra_metadata = NULL,
     show_filter_plots = FALSE,
     export_maps = TRUE,
@@ -71,7 +71,7 @@ process_logger_year <- function(
 
     if (is.null(logger_calibration_data$total_years_tracked)) {
         # Must have deployment date and retrieval date instead
-        if (is.null(logger_calibration_data$date_deployed) | is.null(logger_calibration_data$date_retrieved)) {
+        if (is.null(logger_calibration_data$date_deployed) || is.null(logger_calibration_data$date_retrieved)) {
             stop("Calibration data must contain either start/end datetimes or deployment/retrieval dates.")
         }
 

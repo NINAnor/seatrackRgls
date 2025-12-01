@@ -24,7 +24,7 @@
 #' @export
 process_folder <- function(
     import_directory, calibration_data, all_colony_info,
-    filter_list = seatrack_settings_list, extra_metadata = NULL, show_filter_plots = FALSE,
+    filter_list = seatrackRgls::seatrack_settings_list, extra_metadata = NULL, show_filter_plots = FALSE,
     output_dir = NULL, calibration_mode = TRUE, export_calibration_template = TRUE) {
     if (is.character(calibration_data)) {
         calibration_data <- read_cal_files(calibration_data)

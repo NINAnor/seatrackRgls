@@ -20,7 +20,7 @@ process_logger_light_data(
 
 \item{logger_calibration_data}{A data frame containing calibration data for the logger. If multiple calibration windows are provided, each will be processed in sequence.}
 
-\item{logger_filter}{A list of filter settings specific to the logger species. Defaults to `seatrack_settings_list`.}
+\item{logger_filter}{A list of filter settings specific to the logger species.}
 
 \item{logger_colony_info}{A data frame containing colony information for the logger.}
 

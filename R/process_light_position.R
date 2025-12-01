@@ -6,7 +6,7 @@
 #' @param light_data A data frame containing the light data.
 #' @param light_data_calibration A data frame containing calibration data for the logger.
 #' @param logger_colony_info A data frame containing colony information for the logger.
-#' @param logger_filter A list of filter settings specific to the logger species. Defaults to `seatrack_settings_list`.
+#' @param logger_filter A list of filter settings specific to the logger species.
 #' @param logger_extra_metadata A data frame containing extra metadata for the logger. Defaults to NULL.
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
 #' @param plotting_dir An optional directory path to save plotting outputs. Defaults to NULL.
