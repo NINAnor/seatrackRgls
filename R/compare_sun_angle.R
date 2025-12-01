@@ -1,6 +1,6 @@
 compare_sun_angle <- function(prev_posdata_export, new_posdata_export, type) {
     main_data <- prev_posdata_export[prev_posdata_export$eqfilter == 1 & !is.na(prev_posdata_export$lat) & prev_posdata_export$type == 1, ]
-    sun_angle_seq <- sun_angles[[type]]
+    sun_angle_seq <- seatrackRgls::sun_angles[[type]]
     compare_tracks <- data.frame(sun.angle = sun_angle_seq)
     compare_tracks$start_of_track <- NA
     compare_tracks$end_of_track <- NA

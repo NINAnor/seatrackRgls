@@ -342,7 +342,7 @@ process_light_position <- function(
             print("Exporting calibration plots...")
             make_calibration_plots(
                 posdata_export,
-                sun_angle_seq = sun_angles$general,
+                sun_angle_seq = seatrackRgls::sun_angles$general,
                 light_data_calibration = light_data_calibration,
                 logger_filter = logger_filter,
                 logger_id_year = logger_id_year,

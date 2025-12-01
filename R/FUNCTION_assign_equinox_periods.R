@@ -48,6 +48,8 @@ assign_equinox_periods <- function(lats, dates, breedingloc_lat, sun) {
     if (is.na(september_october1_sun)) september_october1_sun <- august_september1_sun
     if (is.na(september_october1_sun)) september_october1_sun <- sun[1]
 
+    equinox_table <- seatrackRgls::equinox_table
+
     sun_angle <- unique(equinox_table$sun_angle)[which(abs(unique(equinox_table$sun_angle) - feb_march1_sun) == min(abs(unique(equinox_table$sun_angle) - feb_march1_sun)))]
     new_start_DOY <- min(equinox_table$start_spring_eq[equinox_table$sun_angle %in% sun_angle[1]])
     feb_march2_sun <- median(sun[DOY %in% c((new_start_DOY - 4):new_start_DOY)])

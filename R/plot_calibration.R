@@ -11,7 +11,7 @@ setup_dir <- function(plotting_dir) {
     return(sun_plot_dir)
 }
 
-lat_time_plot <- function(posdata_export, sun_angle_seq = sun_angles$general, light_data_calibration, logger_filter, logger_id_year, plotting_dir = NULL) {
+lat_time_plot <- function(posdata_export, sun_angle_seq = seatrackRgls::sun_angles$general, light_data_calibration, logger_filter, logger_id_year, plotting_dir = NULL) {
     sun_plot_dir <- setup_dir(plotting_dir)
 
     adjust_lon <- get_adjust_lon(posdata_export)
@@ -63,7 +63,7 @@ lat_time_plot <- function(posdata_export, sun_angle_seq = sun_angles$general, li
     }
 }
 
-calibration_maps <- function(posdata_export, sun_angle_seq = sun_angles$general, light_data_calibration, logger_filter, logger_id_year, plotting_dir = NULL) {
+calibration_maps <- function(posdata_export, sun_angle_seq = seatrackRgls::sun_angles$general, light_data_calibration, logger_filter, logger_id_year, plotting_dir = NULL) {
     sun_plot_dir <- setup_dir(plotting_dir)
 
     map_ver <- get_map_ver(posdata_export)
@@ -131,7 +131,7 @@ calibration_maps <- function(posdata_export, sun_angle_seq = sun_angles$general,
     }
 }
 
-make_calibration_plots <- function(posdata_export, sun_angle_seq = sun_angles$general, light_data_calibration, logger_filter, logger_id_year, plotting_dir = NULL) {
+make_calibration_plots <- function(posdata_export, sun_angle_seq = seatrackRgls::sun_angles$general, light_data_calibration, logger_filter, logger_id_year, plotting_dir = NULL) {
     lat_time_plot(posdata_export, sun_angle_seq, light_data_calibration, logger_filter, logger_id_year, plotting_dir)
     calibration_maps(posdata_export, sun_angle_seq, light_data_calibration, logger_filter, logger_id_year, plotting_dir)
 }
