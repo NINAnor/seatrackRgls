@@ -148,6 +148,8 @@ twilight_cleanup <- function(df, breedingloc_lon, breedingloc_lat, months_breedi
     set$date <- NULL
 
     ###########################
+    set_breeding$date <- NULL
+    rise_breeding$date <- NULL
     together <- NULL
     together <- as.data.frame(rbind(set, rise, set_breeding, rise_breeding))
     together$DTime <- as.POSIXct(together$tFirst, format = "%d/%m/%y %H:%M", tz = "GMT")
