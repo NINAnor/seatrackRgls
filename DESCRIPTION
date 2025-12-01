@@ -35,7 +35,8 @@ Imports:
     zoo,
     argosfilter,
     future.apply,
-    rnaturalearthdata
+    rnaturalearthdata,
+    suntools
 Remotes: SLisovski/GeoLight,
     distancetocoast=github::mdsumner/distancetocoast,
     GeoLocTools=github::SLisovski/GeoLocTools,
