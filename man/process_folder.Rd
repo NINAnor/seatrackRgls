@@ -12,7 +12,8 @@ process_folder(
   extra_metadata = NULL,
   show_filter_plots = FALSE,
   output_dir = NULL,
-  calibration_mode = TRUE
+  calibration_mode = TRUE,
+  export_calibration_template = TRUE
 )
 }
 \arguments{
@@ -33,7 +34,12 @@ If not in calibration mode, the data frame is expected to be in the format outpu
 
 \item{output_dir}{An optional directory path to save processed outputs. Defaults to NULL.}
 
-\item{calibration_mode}{A logical indicating whether to run in calibration mode. Defaults to TRUE.}
+\item{calibration_mode}{A logical indicating whether to run in calibration mode. Defaults to TRUE.
+If TRUE, the function exports a combined calibration data file for all processed loggers.
+If FALSE, the function exports processed position data, filtering summaries, and twilight estimates for
+each logger/year combination.}
+
+\item{export_calibration_template}{A logical indicating whether to export an excel calibration template. Defaults to TRUE.}
 }
 \value{
 If calibration_mode is FALSE, returns nothing, but exports processed data to output_dir.

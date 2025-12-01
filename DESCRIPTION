@@ -24,7 +24,7 @@ Imports:
     mice,
     lubridate,
     dplyr,
-    raster,
+    terra,
     roll,
     baytrends,
     suncalc,

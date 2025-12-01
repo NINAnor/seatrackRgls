@@ -9,7 +9,9 @@
 prepare_calibration <- function(
     import_directory,
     metadata,
-    all_colony_info, output_directory, export_calibration_template = TRUE) {
+    all_colony_info, 
+    output_directory, 
+    export_calibration_template = TRUE) {
     calibration_template <- process_folder(
         import_directory = import_directory,
         calibration_data = metadata,

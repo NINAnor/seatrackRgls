@@ -8,7 +8,8 @@ prepare_calibration(
   import_directory,
   metadata,
   all_colony_info,
-  output_directory
+  output_directory,
+  export_calibration_template = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ prepare_calibration(
 \item{all_colony_info}{Data frame containing colony information.}
 
 \item{output_directory}{Directory to save processed position outputs.}
+
+\item{export_calibration_template}{A logical indicating whether to export a calibration template. Defaults to TRUE.}
 }
 \description{
 Prepare Calibration Data from a Folder
