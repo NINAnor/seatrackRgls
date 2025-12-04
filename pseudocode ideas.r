@@ -10,5 +10,6 @@ extra_metadata <- result$extra_metadata
 # logger_id, logger_model, species, colony
 # if start_datetime is not provided, deployment and retrieval must be provided
 
+all_colony_info <- data.frame(colony = "Halten", col_lat = 64.1716, col_lon = 9.4078)
 metadata <- openxlsx2::read_xlsx(metadata_path)
 metadata <- metadata[!is.na(metadata$logger_id) & !duplicated(metadata$logger_id), c("logger_id", "logger_model", "date_deployed", "date_retrieved", "colony", "species")]

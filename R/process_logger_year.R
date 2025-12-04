@@ -136,7 +136,7 @@ process_logger_year <- function(
     )
 
     if (calibration_mode == FALSE) {
-        if (!is.null(output_dir)) {
+        if (!is.null(output_dir) && !is.null(result)) {
             pos_output_dir <- file.path(output_dir, "processed_positions")
             if (!dir.exists(pos_output_dir)) {
                 dir.create(pos_output_dir, recursive = TRUE)

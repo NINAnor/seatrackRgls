@@ -83,7 +83,6 @@ process_folder <- function(
             # do some workbook formattign to make it easier to fill in
             calibration_output_dir <- file.path(output_dir, "calibration_data")
             calibration_to_wb(all_calibration, calibration_output_dir)
-            print(paste("Exported calibration data to", calibration_filepath))
         }
         return(all_calibration)
     }
@@ -141,6 +140,8 @@ calibration_to_wb <- function(all_calibration, calibration_output_dir, calibrati
     )
 
     wb$save(file = calibration_filepath, overwrite = TRUE, )
+    print(paste("Exported calibration data to", calibration_filepath))
+
 }
 
 read_cal_file <- function(f) {
