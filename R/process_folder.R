@@ -160,10 +160,11 @@ read_cal_file <- function(f) {
 }
 
 read_cal_files <- function(calibration_data) {
-    files <- if (dir.exists(calibration_data)) {
-        list.files(calibration_data, full.names = TRUE)
+    
+    if (dir.exists(calibration_data)) {
+        files <- list.files(calibration_data, full.names = TRUE)
     } else {
-        calibration_data
+        files <- calibration_data
     }
     files <- files[file.exists(files)]
     if (length(files) == 0) stop("No calibration files found at path provided.")
