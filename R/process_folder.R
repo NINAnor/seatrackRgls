@@ -31,6 +31,10 @@ process_folder <- function(
     }
 
     file_info <- scan_import_dir(import_directory)
+    if (nrow(file_info) == 0) {
+        print("No light files found in import diretory.")
+        return(NULL)
+    }
     all_logger_id_year <- file_info[!duplicated(file_info$id_year), ]
     print(paste("Found", nrow(all_logger_id_year), "unique logger ID + year combinations."))
 
