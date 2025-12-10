@@ -44,7 +44,7 @@ process_logger_year <- function(
     analyzer = "") {
     print(paste("Processing logger", logger_id, "for year", year))
     file_info <- scan_import_dir(import_directory)
-    file_info <- file_info[file_info$logger_id == logger_id & file_info$year_downloaded == year]
+    file_info <- file_info[file_info$logger_id == logger_id & file_info$year_downloaded == year, ]
 
     if (is.character(calibration_data)) {
         calibration_data <- read_cal_files(calibration_data)
@@ -63,7 +63,7 @@ process_logger_year <- function(
         calibration_data$logger_model <- ""
     } else {
         model <- calibration_data$logger_model[1]
-        file_info <- file_info[file_info$logger_model == model,]
+        file_info <- file_info[file_info$logger_model == model, ]
     }
 
     filepaths <- file_info$filename
