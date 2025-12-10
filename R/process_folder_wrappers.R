@@ -6,6 +6,7 @@
 #' In calibration mode, the minimum required columns are `logger_id`, `species`, `colony`, `date_deployed` and `date_retrieved`.
 #' @param all_colony_info Data frame containing colony information.
 #' @param output_directory Directory to save processed position outputs.
+#' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
 #' @param export_calibration_template A logical indicating whether to export a calibration template. Defaults to TRUE.
 #' @export
 prepare_calibration <- function(
@@ -13,13 +14,14 @@ prepare_calibration <- function(
     metadata,
     all_colony_info, 
     output_directory, 
+    show_filter_plots = FALSE,
     export_calibration_template = TRUE) {
     calibration_template <- process_folder(
         import_directory = import_directory,
         calibration_data = metadata,
         all_colony_info = all_colony_info,
         output_dir = output_directory,
-        show_filter_plots = FALSE,
+        show_filter_plots = show_filter_plots,
         calibration_mode = TRUE,
         export_calibration_template = export_calibration_template
     )

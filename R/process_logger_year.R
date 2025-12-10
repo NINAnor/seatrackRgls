@@ -66,9 +66,9 @@ process_logger_year <- function(
         file_info <- file_info[tolower(file_info$logger_model) == tolower(model), ]
     }
 
-    files <- file_info$filename
+    filepaths <- file_info$filename
 
-    if (length(files) == 0) {
+    if (length(filepaths) == 0) {
         stop("No files found for this logger/year combination.")
     }
 

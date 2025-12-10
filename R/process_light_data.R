@@ -50,18 +50,31 @@ process_logger_light_data <- function(
             if (calibration_mode) {
                 result <- logger_calibration_data[i, ]
                 result <- add_default_cols(result)
+                result$problem <- TRUE
             }
         } else {
-            result <- process_light_position(
-                light_data,
-                light_data_calibration,
-                logger_filter,
-                logger_colony_info,
-                logger_extra_metadata,
-                show_filter_plots,
-                plotting_dir,
-                calibration_mode = calibration_mode
-            )
+            tryCatch({
+                result <- process_light_position(
+                    light_data,
+                    light_data_calibration,
+                    logger_filter,
+                    logger_colony_info,
+                    logger_extra_metadata,
+                    show_filter_plots,
+                    plotting_dir,
+                    calibration_mode = calibration_mode
+                )
+                if (calibration_mode) {
+                    result$problem <- FALSE
+                }
+            }, error = function(e){
+                print(e)
+                if (calibration_mode) {
+                    result <- logger_calibration_data[i, ]
+                    result <- add_default_cols(result)
+                    result$problem <- TRUE
+                }
+            })
         }
 
         result <- result[!sapply(result, is.null)]
