@@ -12,22 +12,31 @@ get_light_data <- function(filepaths) {
         stop("No light data file found (expected .lig or .lux file).")
     }
     file_extension <- tools::file_ext(light_filepath)
-    if (tolower(file_extension) == "lig") {
-        light_data <- read.table(light_filepath[1], sep = ",", skip = 1, header = FALSE, fill = TRUE)
-        light_data$dtime <- datetime_conversion(light_data[, 2])
-        light_data$lux <- light_data[, 4]
-    } else if (tolower(file_extension) == "lux") {
-        light_data <- read.table(light_filepath[1], sep = "\t", header = FALSE, fill = TRUE, skip = 20)
-        light_data$dtime <- datetime_conversion(light_data[, 1])
-        light_data$lux <- light_data[, 2]
-    }
-    light_data$lux <- as.numeric(gsub("\\,", ".", light_data$lux))
-    light_data$date <- as.Date(light_data$dtime)
-    light_data$date <- date_conversion(light_data$date)
-    light_data$time <- strptime(paste("01.01.2000", substr(light_data$dtime, 12, 19), sep = " "), "%d.%m.%Y %H:%M:%S") # Not sure what is going on here?
+    if (all(tolower(file_extension) == "lig")) {
+        all_light_data <- lapply(seq_along(light_filepath), function(i){
+            light_data <- read.table(light_filepath[i], sep = ",", skip = 1, header = FALSE, fill = TRUE)
+            light_data$dtime <- datetime_conversion(light_data[, 2])
+            light_data$lux <- light_data[, 4]
+            return(light_data)
+        })
 
-    light_data$V1 <- tolower(light_data$V1)
-    return(light_data)
+    } else if (all(tolower(file_extension) == "lux")) {
+        all_light_data <- lapply(seq_along(light_filepath), function(i){
+            light_data <- read.table(light_filepath[1], sep = "\t", header = FALSE, fill = TRUE, skip = 20)
+            light_data$dtime <- datetime_conversion(light_data[, 1])
+            light_data$lux <- light_data[, 2]
+            return(light_data)
+        })
+    }
+    all_light_data <- do.call(rbind, all_light_data)
+
+    all_light_data$lux <- as.numeric(gsub("\\,", ".", all_light_data$lux))
+    all_light_data$date <- as.Date(all_light_data$dtime)
+    all_light_data$date <- date_conversion(all_light_data$date)
+    all_light_data$time <- strptime(paste("01.01.2000", substr(all_light_data$dtime, 12, 19), sep = " "), "%d.%m.%Y %H:%M:%S") # Not sure what is going on here?
+
+    all_light_data$V1 <- tolower(all_light_data$V1)
+    return(all_light_data)
 }
 
 #' Limit light data to calibration time windows

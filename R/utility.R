@@ -95,7 +95,7 @@ scan_import_dir <- function(import_directory) {
     }
     all_files_split <- strsplit(basename(all_files), "_")
     file_info_list <- lapply(all_files_split, function(x) {
-        data.frame(logger_id = x[1], year_downloaded = x[2], id_year = paste(x[1], x[2]))
+        data.frame(logger_id = x[1], year_downloaded = x[2], logger_model = x[3], id_year = paste(x[1], x[2]))
     })
     file_info <- do.call(rbind, file_info_list)
     file_info <- data.frame(filename = all_files, file_info)

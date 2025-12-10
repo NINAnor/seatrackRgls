@@ -44,10 +44,8 @@ process_logger_year <- function(
     analyzer = "") {
     print(paste("Processing logger", logger_id, "for year", year))
     file_info <- scan_import_dir(import_directory)
-    files <- file_info$filename[file_info$logger_id == logger_id & file_info$year_downloaded == year]
-    if (length(files) == 0) {
-        stop("No files found for this logger/year combination.")
-    }
+    file_info <- file_info[file_info$logger_id == logger_id & file_info$year_downloaded == year]
+
     if (is.character(calibration_data)) {
         calibration_data <- read_cal_files(calibration_data)
     }
@@ -63,9 +61,16 @@ process_logger_year <- function(
     if (is.null(calibration_data$logger_model)) {
         print("logger_model not found in calibration_data, setting to empty string")
         calibration_data$logger_model <- ""
+    } else {
+        model <- calibration_data$logger_model[1]
+        file_info <- file_info[file_info$logger_model == model,]
     }
 
-    filepaths <- files
+    filepaths <- file_info$filename
+
+    if (length(files) == 0) {
+        stop("No files found for this logger/year combination.")
+    }
 
     logger_calibration_data <- calibration_data[calibration_data$logger_id == logger_id, ]
 

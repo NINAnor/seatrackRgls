@@ -32,6 +32,8 @@ process_logger_light_data <- function(
         dir.create(plotting_dir, recursive = TRUE)
     }
 
+    # if there is more than one light file,
+    # First check the logger model
     print("Load light data...")
     all_light_data <- get_light_data(filepaths)
     print("Limit light data to calibration time windows...")
