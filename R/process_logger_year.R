@@ -63,7 +63,7 @@ process_logger_year <- function(
         calibration_data$logger_model <- ""
     } else {
         model <- calibration_data$logger_model[1]
-        file_info <- file_info[file_info$logger_model == model, ]
+        file_info <- file_info[toLower(file_info$logger_model) == toLower(model), ]
     }
 
     files <- file_info$filename

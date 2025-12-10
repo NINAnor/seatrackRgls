@@ -93,7 +93,7 @@ scan_import_dir <- function(import_directory) {
     if (length(all_files) == 0) {
         return(data.frame())
     }
-    all_files_split <- strsplit(basename(all_files), "_")
+    all_files_split <- strsplit(tools::file_path_sans_ext(basename(all_files)), "_")
     file_info_list <- lapply(all_files_split, function(x) {
         data.frame(logger_id = x[1], year_downloaded = x[2], logger_model = x[3], id_year = paste(x[1], x[2]))
     })
