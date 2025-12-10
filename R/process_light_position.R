@@ -9,13 +9,13 @@ add_default_cols <- function(light_data_calibration) {
     if (is.null(light_data_calibration$light_threshold)) {
         light_data_calibration$light_threshold <- NA
     }
-    if (is.null(light_data_calibration$noon_filter)) {
+    if (is.null(light_data_calibration$noon_filter) || is.na(light_data_calibration$noon_filter)) {
         light_data_calibration$noon_filter <- TRUE
     }
-    if (is.null(light_data_calibration$daylength_filter)) {
+    if (is.null(light_data_calibration$daylength_filter) || is.na(light_data_calibration$daylength_filter)) {
         light_data_calibration$daylength_filter <- TRUE
     }
-    if (is.null(light_data_calibration$midnightsun_removal)) {
+    if (is.null(light_data_calibration$midnightsun_removal) || is.na(light_data_calibration$midnightsun_removal)) {
         light_data_calibration$midnightsun_removal <- TRUE
     }
     return(light_data_calibration)
