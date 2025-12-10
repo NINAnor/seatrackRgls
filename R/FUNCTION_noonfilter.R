@@ -111,6 +111,10 @@ noonfilter <- function(df, show_plot) {
 
   # fill datagaps in predictions by baytrends::fillMissing()
   full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 90)
+  if (all(is.na(full_test$predict))) {
+    print("No predictions returned. Cannot apply noon filter.")
+    return(before_changes)
+  }
 
   # fill missing predictions at the end and beginning of the year_tracked, respectively:
   full_test$predict[1:(nrow(full_test) / 2)] <- zoo::na.locf(full_test$predict[1:(nrow(full_test) / 2)], fromLast = TRUE)
@@ -160,6 +164,10 @@ noonfilter <- function(df, show_plot) {
 
   # fill datagaps in predictions by baytrends::fillMissing()
   full_test$predict <- baytrends::fillMissing(full_test$predict, span = 1, max.fill = 90)
+  if (all(is.na(full_test$predict))) {
+    print("No predictions returned. Cannot apply noon filter.")
+    return(before_changes)
+  }
 
   # fill missing predictions at the end and beginning of the year_tracked, respectivly:
   full_test$predict[1:(nrow(full_test) / 2)] <- zoo::na.locf(full_test$predict[1:(nrow(full_test) / 2)], fromLast = TRUE)

@@ -195,6 +195,9 @@ process_light_position <- function(
     } else {
         twilight_data_nf <- twilight_data_dl
     }
+    if (nrow(twilight_data_dl) == nrow(twilight_data_nf)) {
+        light_data_calibration$noon_filter <- FALSE
+    }
     filtering$removed_noonfilter <- (nrow(twilight_data_dl) - nrow(twilight_data_nf))
     print(paste("Removed", filtering$removed_noonfilter, "twilights during noon filtering."))
 
