@@ -1,3 +1,26 @@
+add_default_cols <- function(light_data_calibration) {
+    # Add columns if they are missing
+    if (is.null(light_data_calibration$sun_angle_start)) {
+        light_data_calibration$sun_angle_start <- NA
+    }
+    if (is.null(light_data_calibration$sun_angle_end)) {
+        light_data_calibration$sun_angle_end <- NA
+    }
+    if (is.null(light_data_calibration$light_threshold)) {
+        light_data_calibration$light_threshold <- NA
+    }
+    if (is.null(light_data_calibration$noon_filter)) {
+        light_data_calibration$noon_filter <- TRUE
+    }
+    if (is.null(light_data_calibration$daylength_filter)) {
+        light_data_calibration$daylength_filter <- TRUE
+    }
+    if (is.null(light_data_calibration$midnightsun_removal)) {
+        light_data_calibration$midnightsun_removal <- TRUE
+    }
+    return(light_data_calibration)
+}
+
 #' Process light data to estimate positions and apply filters
 #'
 #' Given light data, calibration data, filter settings, colony info, and extra metadata,
@@ -24,26 +47,8 @@ process_light_position <- function(
     light_data, light_data_calibration, logger_filter, logger_colony_info, logger_extra_metadata,
     show_filter_plots = FALSE, plotting_dir = NULL,
     prev_posdata_export = NULL, type = "main", calibration_mode = FALSE) {
-    # Add columns if they are missing
-    if (is.null(light_data_calibration$sun_angle_start)) {
-        light_data_calibration$sun_angle_start <- NA
-    }
-    if (is.null(light_data_calibration$sun_angle_end)) {
-        light_data_calibration$sun_angle_end <- NA
-    }
-    if (is.null(light_data_calibration$light_threshold)) {
-        light_data_calibration$light_threshold <- NA
-    }
-    if (is.null(light_data_calibration$noon_filter)) {
-        light_data_calibration$noon_filter <- TRUE
-    }
-    if (is.null(light_data_calibration$daylength_filter)) {
-        light_data_calibration$daylength_filter <- TRUE
-    }
-    if (is.null(light_data_calibration$midnightsun_removal)) {
-        light_data_calibration$midnightsun_removal <- TRUE
-    }
 
+    light_data_calibration <- add_default_cols(light_data_calibration)
 
     if (is.na(light_data_calibration$sun_angle_start)) {
         if (type != "main") {

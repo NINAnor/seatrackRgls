@@ -11,6 +11,7 @@
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
 #' @param plotting_dir An optional directory path to save plotting outputs. Defaults to NULL.
 #' @param calibration_mode A logical indicating whether to run in calibration mode. Defaults to TRUE.
+#' @param min_length Number indicating minimum length of light data. Anything below this will fail. Defaults to 40.
 #'
 #' @return If calibration_mode is FALSE, returns a list containing:
 #'          - `twilight_estimates`: A data frame of twilight estimates.
@@ -24,7 +25,8 @@ process_logger_light_data <- function(
     logger_extra_metadata = NULL,
     show_filter_plots = FALSE,
     plotting_dir = NULL,
-    calibration_mode = TRUE) {
+    calibration_mode = TRUE,
+    min_length = 40) {
     # create dir for plotting
     if (!is.null(plotting_dir) && !dir.exists(plotting_dir)) {
         dir.create(plotting_dir, recursive = TRUE)
@@ -41,16 +43,25 @@ process_logger_light_data <- function(
         print(paste("Processing calibration window", i, "of", nrow(logger_calibration_data)))
         light_data <- light_data_split[[i]]
         light_data_calibration <- logger_calibration_data[i, ]
+        if (nrow(light_data) < min_length) {
+            print(paste("Light data has only", nrow(light_data), "rows, skipping."))
+            if (calibration_mode) {
+                result <- logger_calibration_data[i, ]
+                result <- add_default_cols(result)
+            }
+        } else {
+            result <- process_light_position(
+                light_data,
+                light_data_calibration,
+                logger_filter,
+                logger_colony_info,
+                logger_extra_metadata,
+                show_filter_plots,
+                plotting_dir,
+                calibration_mode = calibration_mode
+            )
+        }
 
-        result <- process_light_position(light_data,
-            light_data_calibration,
-            logger_filter,
-            logger_colony_info,
-            logger_extra_metadata,
-            show_filter_plots,
-            plotting_dir,
-            calibration_mode = calibration_mode
-        )
         result <- result[!sapply(result, is.null)]
         all_results <- c(all_results, list(result))
     }
