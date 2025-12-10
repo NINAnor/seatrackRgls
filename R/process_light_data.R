@@ -53,8 +53,8 @@ process_logger_light_data <- function(
                 result$problem <- TRUE
             }
         } else {
-            tryCatch({
-                result <- process_light_position(
+            result <- tryCatch({
+                process_result <- process_light_position(
                     light_data,
                     light_data_calibration,
                     logger_filter,
@@ -65,14 +65,16 @@ process_logger_light_data <- function(
                     calibration_mode = calibration_mode
                 )
                 if (calibration_mode) {
-                    result$problem <- FALSE
+                    process_result$problem <- FALSE
                 }
+                return(process_result)
             }, error = function(e){
                 print(e)
                 if (calibration_mode) {
-                    result <- logger_calibration_data[i, ]
-                    result <- add_default_cols(result)
-                    result$problem <- TRUE
+                    process_result <- logger_calibration_data[i, ]
+                    process_result <- add_default_cols(process_result)
+                    process_result$problem <- TRUE
+                    return(process_result)
                 }
             })
         }
