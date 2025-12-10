@@ -69,7 +69,6 @@ plot_twilight_data <- function(light_data, twilight_data = NULL, light_threshold
         with_preslect <- twilight_data
         with_preslect$hours <- as.numeric(format(with_preslect[, 1], "%H")) + as.numeric(format(with_preslect[, 1], "%M")) / 60
     }
-    print("do no preselect")
     no_preselect <- twilightCalc_bugfree(light_data$dtime, light_data$lux, ask = F, preSelection = FALSE, allTwilights = FALSE, LightThreshold = light_threshold, maxLight = light_intervals)
     no_preselect$hours <- as.numeric(format(no_preselect[, 1], "%H")) + as.numeric(format(no_preselect[, 1], "%M")) / 60
 

@@ -4,8 +4,8 @@ loess_filter <- function(posdata, logger_filter) {
         print("Applying loess filter to position data")
         posdata_2 <- tryCatch(
             {
-                new_pos_data <- GeoLight::loessFilter(posdata$tFirst, posdata$tSecond, posdata$type, k = logger_filter$loess_filter_k, plot = FALSE)
-                return(new_pos_data[loess_filter, ])
+                loess_filter <- GeoLight::loessFilter(posdata$tFirst, posdata$tSecond, posdata$type, k = logger_filter$loess_filter_k, plot = FALSE)
+                return(posdata[loess_filter, ])
             },
             error = function(e) {
                 print(paste("Error in loess filter:", e))
