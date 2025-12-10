@@ -46,6 +46,10 @@ process_logger_year <- function(
     file_info <- scan_import_dir(import_directory)
     file_info <- file_info[file_info$logger_id == logger_id & file_info$year_downloaded == year, ]
 
+    if (nrow(file_info) == 0) {
+        stop("No files found for this logger/year combination.")
+    }
+
     if (is.character(calibration_data)) {
         calibration_data <- read_cal_files(calibration_data)
     }
@@ -63,14 +67,19 @@ process_logger_year <- function(
         calibration_data$logger_model <- ""
     } else {
         model <- calibration_data$logger_model[1]
-        file_info <- file_info[tolower(file_info$logger_model) == tolower(model), ]
+        if (nrow(file_info) > 1) {
+            file_info <- file_info[tolower(file_info$logger_model) == tolower(model), ]
+        }
+        if (nrow(file_info) == 0) {
+            stop("No files found due to mismatch between logger model in metadata and filename")
+        } else if (!all(file_info$logger_model == model)) {
+            print("Mismatch between logger model in metadata and filename")
+        }
     }
 
     filepaths <- file_info$filename
 
-    if (length(filepaths) == 0) {
-        stop("No files found for this logger/year combination.")
-    }
+
 
     logger_calibration_data <- calibration_data[calibration_data$logger_id == logger_id, ]
 
