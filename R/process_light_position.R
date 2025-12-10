@@ -315,7 +315,7 @@ process_light_position <- function(
             posdata_loess,
             posdata_ms,
             light_data_calibration,
-            ogger_colony_info,
+            logger_colony_info,
             logger_filter,
             logger_id_year,
             plotting_dir

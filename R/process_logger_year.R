@@ -74,9 +74,9 @@ process_logger_year <- function(
             file_info <- file_info[tolower(file_info$logger_model) == tolower(model), ]
         }
         if (nrow(file_info) == 0) {
-            stop("No files found due to mismatch between logger model", model, "in metadata and filenames")
+            stop(paste("No files found due to mismatch between logger model", model, "in metadata and filenames"))
         } else if (!all(file_info$logger_model == model)) {
-            print("Mismatch between logger model", model, "in metadata and filenames")
+            print(paste("Mismatch between logger model", model, "in metadata and filenames"))
         }
     }
 

@@ -42,8 +42,18 @@ export_filter_plot <- function(call = {}, show_filter_plots = TRUE, plot_name = 
         )
     }
 
-    result <- eval(call)
-    mtext(side = 3, text = paste(logger_id_year, plot_name), line = 0.5, cex = 0.7)
+    result <- tryCatch(call,
+        error = function(e) {
+            print(e)
+            return()
+        }
+    )
+    try(
+        {
+            mtext(side = 3, text = paste(logger_id_year, plot_name), line = 0.5, cex = 0.7)
+        },
+        silent = TRUE
+    )
 
     if (!is.null(plotting_dir)) {
         dev.off()

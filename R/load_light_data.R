@@ -25,11 +25,11 @@ get_light_data <- function(filepaths) {
             light_data <- read.table(light_filepath[1], sep = "\t", header = FALSE, fill = TRUE, skip = 20)
             light_data$dtime <- datetime_conversion(light_data[, 1])
             light_data$lux <- light_data[, 2]
+            light_data$V1 <- "ok"
             return(light_data)
         })
     }
     all_light_data <- do.call(rbind, all_light_data)
-
     all_light_data$lux <- as.numeric(gsub("\\,", ".", all_light_data$lux))
     all_light_data$date <- as.Date(all_light_data$dtime)
     all_light_data$date <- date_conversion(all_light_data$date)
