@@ -62,11 +62,14 @@ process_logger_year <- function(
         stop("calibration_data must contain colony name")
     }
 
-    if (is.null(calibration_data$logger_model)) {
+    logger_calibration_data <- calibration_data[calibration_data$logger_id == logger_id, ]
+
+
+    if (is.null(logger_calibration_data$logger_model)) {
         print("logger_model not found in calibration_data, setting to empty string")
-        calibration_data$logger_model <- ""
+        logger_calibration_data$logger_model <- ""
     } else {
-        model <- calibration_data$logger_model[1]
+        model <- logger_calibration_data$logger_model[1]
         if (nrow(file_info) > 1) {
             file_info <- file_info[tolower(file_info$logger_model) == tolower(model), ]
         }
@@ -81,7 +84,6 @@ process_logger_year <- function(
 
 
 
-    logger_calibration_data <- calibration_data[calibration_data$logger_id == logger_id, ]
 
     if (is.null(logger_calibration_data$total_years_tracked)) {
         # Must have deployment date and retrieval date instead
