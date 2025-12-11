@@ -86,7 +86,7 @@ process_folder <- function(
         if (export_calibration_template) {
             # do some workbook formattign to make it easier to fill in
             calibration_output_dir <- file.path(output_dir, "calibration_data")
-            calibration_to_wb(all_calibration, calibration_output_dir)
+            calibration_to_wb(all_calibration, calibration_output_dir, "calibration.xlsx")
         }
         return(all_calibration)
     }

@@ -384,6 +384,8 @@ handle_seasonal_calibration <- function(
         type = "summer",
         calibration_mode = TRUE
     )
+    print(winter_calibration)
+    print(summer_calibration)
     print("Recalculating positions with seasonal calibrations...")
     winter_pos <- process_light_position(
         light_data, winter_calibration, logger_filter, logger_colony_info, logger_extra_metadata,
@@ -401,23 +403,25 @@ handle_seasonal_calibration <- function(
         type = "summer",
         calibration_mode = FALSE
     )
+    print(nrow(winter_pos))
+    print(nrow(summer_pos))
     print("Combining seasonal positions...")
-    if (logger_colony_info$col_lat > 0) {
-        summer_days <- c(98:247)
-        winter_days <- c(290:366, 1:50)
-    } else {
-        summer_days <- c(285:366, 1:60)
-        winter_days <- c(110:210)
-    }
-    if (light_data_calibration$species %in% c("Arctic tern", "arctic tern", "Sterna paradisaea", "sterna paradisaea", "ARTE")) {
-        summer_days <- c(285:366, 1:60, 110:247)
-        winter_days <- c(285:366, 1:60, 110:247)
-    }
-    add_to_summer <- summer_pos[lubridate::yday(summer_pos$date_time) %in% summer_days, ]
-    add_to_summer <- add_to_summer[!(as.Date(add_to_summer$date_time) %in% as.Date(posdata_export$date_time)), ]
+    # if (logger_colony_info$col_lat > 0) {
+    #     summer_days <- c(98:247)
+    #     winter_days <- c(290:366, 1:50)
+    # } else {
+    #     summer_days <- c(285:366, 1:60)
+    #     winter_days <- c(110:210)
+    # }
+    # if (light_data_calibration$species %in% c("Arctic tern", "arctic tern", "Sterna paradisaea", "sterna paradisaea", "ARTE")) {
+    #     summer_days <- c(285:366, 1:60, 110:247)
+    #     winter_days <- c(285:366, 1:60, 110:247)
+    # }
+    # add_to_summer <- summer_pos[lubridate::yday(summer_pos$date_time) %in% summer_days, ]
+    add_to_summer <- summer_pos[!(as.Date(summer_pos$date_time) %in% as.Date(posdata_export$date_time)), ]
 
-    add_to_winter <- winter_pos[lubridate::yday(winter_pos$date_time) %in% winter_days, ]
-    add_to_winter <- add_to_winter[!(as.Date(add_to_winter$date_time) %in% as.Date(posdata_export$date_time)), ]
+    # add_to_winter <- winter_pos[lubridate::yday(winter_pos$date_time) %in% winter_days, ]
+    add_to_winter <- winter_pos[!(as.Date(winter_pos$date_time) %in% as.Date(posdata_export$date_time)), ]
 
     posdata_export_w_s <- rbind(posdata_export, add_to_summer, add_to_winter)
 

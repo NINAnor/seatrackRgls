@@ -137,8 +137,11 @@ process_logger_year <- function(
     # Get logger colony info
     logger_colony_info <- all_colony_info[all_colony_info$colony == logger_calibration_data$colony[1], ]
 
+    if (is.character(filter_list)) {
+        filter_list <- read_filter_file(filter_list)
+    }
     # Get logger filter settings
-    logger_filter <- filter_list[[tolower(logger_calibration_data$species[1])]]
+    logger_filter <- filter_list$get_settings_from_list(logger_calibration_data$species[1])
 
     result <- process_logger_light_data(
         filepaths = filepaths,
@@ -153,30 +156,38 @@ process_logger_year <- function(
 
     if (calibration_mode == FALSE) {
         if (!is.null(output_dir) && !is.null(result)) {
+
             pos_output_dir <- file.path(output_dir, "processed_positions")
             if (!dir.exists(pos_output_dir)) {
                 dir.create(pos_output_dir, recursive = TRUE)
             }
-            output_filepath <- file.path(pos_output_dir, paste0("positions_-_", logger_id, "_", year, ".csv"))
-            write.csv(result$posdata_export, output_filepath, row.names = FALSE)
-            print(paste("Exported processed positions to", output_filepath))
+            if (!is.null(result$posdata_export)) {
+                output_filepath <- file.path(pos_output_dir, paste0("positions_-_", logger_id, "_", year, ".csv"))
+                write.csv(result$posdata_export, output_filepath, row.names = FALSE)
+                print(paste("Exported processed positions to", output_filepath))
+            }
+
 
             filter_output_dir <- file.path(output_dir, "filtering_summaries")
             if (!dir.exists(filter_output_dir)) {
                 dir.create(filter_output_dir, recursive = TRUE)
             }
-            filter_filepath <- file.path(filter_output_dir, paste0("filtering_-_", logger_id, "_", year, ".csv"))
-            write.csv(result$filtering, filter_filepath, row.names = FALSE)
-            print(paste("Exported filtering summary to", filter_filepath))
+            if (!is.null(result$filtering)) {
+                filter_filepath <- file.path(filter_output_dir, paste0("filtering_-_", logger_id, "_", year, ".csv"))
+                write.csv(result$filtering, filter_filepath, row.names = FALSE)
+                print(paste("Exported filtering summary to", filter_filepath))
+            }
 
             twilight_output_dir <- file.path(output_dir, "twilight_estimates")
             if (!dir.exists(twilight_output_dir)) {
                 dir.create(twilight_output_dir, recursive = TRUE)
             }
-            twilight_filepath <- file.path(twilight_output_dir, paste0("twilights_-_", logger_id, "_", year, ".csv"))
-            write.csv(result$twilight_estimates, twilight_filepath, row.names = FALSE)
-            print(paste("Exported twilight estimates to", twilight_filepath))
-            if (export_maps) {
+            if (!is.null(result$twilight_estimates)) {
+                twilight_filepath <- file.path(twilight_output_dir, paste0("twilights_-_", logger_id, "_", year, ".csv"))
+                write.csv(result$twilight_estimates, twilight_filepath, row.names = FALSE)
+                print(paste("Exported twilight estimates to", twilight_filepath))
+            }
+            if (export_maps && !is.null(result$posdata_export)) {
                 map_output_dir <- file.path(output_dir, "maps")
                 if (!dir.exists(map_output_dir)) {
                     dir.create(map_output_dir, recursive = TRUE)

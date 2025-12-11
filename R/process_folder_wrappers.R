@@ -15,7 +15,8 @@ prepare_calibration <- function(
     all_colony_info, 
     output_directory, 
     show_filter_plots = FALSE,
-    export_calibration_template = TRUE) {
+    export_calibration_template = TRUE,
+    filter_list = seatrackRgls::seatrack_settings_list) {
     calibration_template <- process_folder(
         import_directory = import_directory,
         calibration_data = metadata,
@@ -23,7 +24,8 @@ prepare_calibration <- function(
         output_dir = output_directory,
         show_filter_plots = show_filter_plots,
         calibration_mode = TRUE,
-        export_calibration_template = export_calibration_template
+        export_calibration_template = export_calibration_template,
+        filter_list = filter_list
     )
     if (!export_calibration_template) {
         return(calibration_template)
@@ -41,7 +43,10 @@ prepare_calibration <- function(
 process_positions <- function(
     import_directory,
     calibration_data,
-    all_colony_info, output_directory, extra_metadata = NULL) {
+    all_colony_info, 
+    output_directory, 
+    extra_metadata = NULL,
+    filter_list = seatrackRgls::seatrack_settings_list) {
     result <- process_folder(
         import_directory = import_directory,
         calibration_data = calibration_data,
@@ -49,6 +54,7 @@ process_positions <- function(
         output_dir = output_directory,
         show_filter_plots = TRUE,
         calibration_mode = FALSE,
-        extra_metadata = extra_metadata
+        extra_metadata = extra_metadata,
+        filter_list = filter_list
     )
 }

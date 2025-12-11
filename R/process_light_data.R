@@ -53,32 +53,35 @@ process_logger_light_data <- function(
                 result$problem <- TRUE
             }
         } else {
-            result <- tryCatch({
-                process_result <- process_light_position(
-                    light_data,
-                    light_data_calibration,
-                    logger_filter,
-                    logger_colony_info,
-                    logger_extra_metadata,
-                    show_filter_plots,
-                    plotting_dir,
-                    calibration_mode = calibration_mode
-                )
-                if (calibration_mode) {
-                    process_result$problem <- FALSE
-                }
-                return(process_result)
-            }, error = function(e) {
-                print(paste("Error in processing:", e))
-                if (calibration_mode) {
-                    process_result <- logger_calibration_data[i, ]
-                    process_result <- add_default_cols(process_result)
-                    process_result$problem <- TRUE
+            result <- tryCatch(
+                {
+                    process_result <- process_light_position(
+                        light_data,
+                        light_data_calibration,
+                        logger_filter,
+                        logger_colony_info,
+                        logger_extra_metadata,
+                        show_filter_plots,
+                        plotting_dir,
+                        calibration_mode = calibration_mode
+                    )
+                    if (calibration_mode) {
+                        process_result$problem <- FALSE
+                    }
                     return(process_result)
-                } else {
-                    return(NULL)
+                },
+                error = function(e) {
+                    print(paste("Error in processing:", e))
+                    if (calibration_mode) {
+                        process_result <- logger_calibration_data[i, ]
+                        process_result <- add_default_cols(process_result)
+                        process_result$problem <- TRUE
+                        return(process_result)
+                    } else {
+                        return(NULL)
+                    }
                 }
-            })
+            )
         }
 
         result <- result[!sapply(result, is.null)]
@@ -90,7 +93,10 @@ process_logger_light_data <- function(
         # Combine results
         combined_twilight_estimates <- do.call(rbind, lapply(all_results, function(x) x$twilight_estimates))
         combined_posdata_export <- do.call(rbind, lapply(all_results, function(x) x$posdata_export))
-        combined_posdata_export$raw_data_file <- basename(filepaths[1])
+        if (!is.null(combined_posdata_export)) {
+            combined_posdata_export$raw_data_file <- basename(filepaths[1])
+        }
+
         combined_filtering <- do.call(rbind, lapply(all_results, function(x) x$filtering))
 
         return(list(
