@@ -9,17 +9,22 @@ prepare_calibration(
   metadata,
   all_colony_info,
   output_directory,
+  show_filter_plots = FALSE,
   export_calibration_template = TRUE
 )
 }
 \arguments{
 \item{import_directory}{Directory containing raw light data files.}
 
-\item{metadata}{Data frame containing simple metadata for loggers.}
+\item{metadata}{A data frame containing calibration data for all loggers or a string providing a filepath to read this data from. This can be from an excel file, CSV file or a directory containing multiple calibration files.
+In calibration mode, this dataframe can consist of a single row per logger/year combination.
+In calibration mode, the minimum required columns are `logger_id`, `species`, `colony`, `date_deployed` and `date_retrieved`.}
 
 \item{all_colony_info}{Data frame containing colony information.}
 
 \item{output_directory}{Directory to save processed position outputs.}
+
+\item{show_filter_plots}{A logical indicating whether to show filter plots. Defaults to FALSE.}
 
 \item{export_calibration_template}{A logical indicating whether to export a calibration template. Defaults to TRUE.}
 }

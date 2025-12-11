@@ -12,7 +12,8 @@ process_logger_light_data(
   logger_extra_metadata = NULL,
   show_filter_plots = FALSE,
   plotting_dir = NULL,
-  calibration_mode = TRUE
+  calibration_mode = TRUE,
+  min_length = 40
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ process_logger_light_data(
 \item{plotting_dir}{An optional directory path to save plotting outputs. Defaults to NULL.}
 
 \item{calibration_mode}{A logical indicating whether to run in calibration mode. Defaults to TRUE.}
+
+\item{min_length}{Number indicating minimum length of light data. Anything below this will fail. Defaults to 40.}
 }
 \value{
 If calibration_mode is FALSE, returns a list containing:

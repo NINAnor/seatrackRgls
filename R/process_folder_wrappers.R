@@ -4,7 +4,7 @@
 #' @param metadata A data frame containing calibration data for all loggers or a string providing a filepath to read this data from. This can be from an excel file, CSV file or a directory containing multiple calibration files.
 #' In calibration mode, this dataframe can consist of a single row per logger/year combination.
 #' In calibration mode, the minimum required columns are `logger_id`, `species`, `colony`, `date_deployed` and `date_retrieved`.
-#' @param all_colony_info Data frame containing colony information.
+#' @param all_colony_info A data frame containing colony information for all loggers (one row per colony). The required columns are `colony`, `latitude`, and `longitude`.
 #' @param output_directory Directory to save processed position outputs.
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
 #' @param export_calibration_template A logical indicating whether to export a calibration template. Defaults to TRUE.
@@ -33,8 +33,8 @@ prepare_calibration <- function(
 #' Process Positions from a Folder
 #'
 #' @param import_directory Directory containing raw light data files.
-#' @param calibration_data Data frame containing calibration data for loggers.
-#' @param all_colony_info Data frame containing colony information.
+#' @param calibration_data Data frame containing calibration data for loggers or a path pointing to the calibration data.
+#' @param all_colony_info A data frame containing colony information for all loggers (one row per colony). The required columns are `colony`, `latitude`, and `longitude`.
 #' @param output_directory Directory to save processed position outputs.
 #' @param extra_metadata Optional data frame containing extra metadata for loggers.
 #' @export
