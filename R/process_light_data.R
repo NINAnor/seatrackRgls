@@ -68,13 +68,15 @@ process_logger_light_data <- function(
                     process_result$problem <- FALSE
                 }
                 return(process_result)
-            }, error = function(e){
-                print(e)
+            }, error = function(e) {
+                print(paste("Error in processing:", e))
                 if (calibration_mode) {
                     process_result <- logger_calibration_data[i, ]
                     process_result <- add_default_cols(process_result)
                     process_result$problem <- TRUE
                     return(process_result)
+                } else {
+                    return(NULL)
                 }
             })
         }
