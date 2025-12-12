@@ -223,6 +223,8 @@ process_light_position <- function(
     } else {
         posdata$eqfilter <- TRUE
     }
+    print(paste(sum(!posdata$eqfilter, na.rm = TRUE), "positions marked as during equinox periods."))
+    print("Applied equinox filter to positions.")
 
     # Speed filtering --------------------
     posdata_sf <- speed_filter(posdata, logger_filter$speed)
@@ -384,8 +386,8 @@ handle_seasonal_calibration <- function(
         type = "summer",
         calibration_mode = TRUE
     )
-    print(winter_calibration)
-    print(summer_calibration)
+    print(paste("Winter sun angles:", winter_calibration$sun_angle_start, winter_calibration$sun_angle_end))
+    print(paste("Summer sun angles:", summer_calibration$sun_angle_start, summer_calibration$sun_angle_end))
     print("Recalculating positions with seasonal calibrations...")
     winter_pos <- process_light_position(
         light_data, winter_calibration, logger_filter, logger_colony_info, logger_extra_metadata,
@@ -403,8 +405,8 @@ handle_seasonal_calibration <- function(
         type = "summer",
         calibration_mode = FALSE
     )
-    print(nrow(winter_pos))
-    print(nrow(summer_pos))
+    print(paste("Calculated", nrow(winter_pos), "winter positions."))
+    print(paste("Calculated", nrow(summer_pos), "summer positions."))
     print("Combining seasonal positions...")
     # if (logger_colony_info$col_lat > 0) {
     #     summer_days <- c(98:247)
@@ -422,10 +424,9 @@ handle_seasonal_calibration <- function(
 
     # add_to_winter <- winter_pos[lubridate::yday(winter_pos$date_time) %in% winter_days, ]
     add_to_winter <- winter_pos[!(as.Date(winter_pos$date_time) %in% as.Date(posdata_export$date_time)), ]
-
     posdata_export_w_s <- rbind(posdata_export, add_to_summer, add_to_winter)
 
-    posdata_export_w_s <- posdata_export_w_s[order(posdata_export$date_time), ]
+    posdata_export_w_s <- posdata_export_w_s[order(posdata_export_w_s$date_time), ]
     filtering$added_seasonal_positions <- nrow(posdata_export_w_s) - nrow(posdata_export)
     print(paste("Added", filtering$added_seasonal_positions, "positions from seasonal calibrations."))
     print(paste("Combined seasonal positions, total positions now:", nrow(posdata_export_w_s)))
