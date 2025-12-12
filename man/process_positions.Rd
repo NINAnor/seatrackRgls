@@ -9,15 +9,16 @@ process_positions(
   calibration_data,
   all_colony_info,
   output_directory,
-  extra_metadata = NULL
+  extra_metadata = NULL,
+  filter_list = seatrackRgls::seatrack_settings_list
 )
 }
 \arguments{
 \item{import_directory}{Directory containing raw light data files.}
 
-\item{calibration_data}{Data frame containing calibration data for loggers.}
+\item{calibration_data}{Data frame containing calibration data for loggers or a path pointing to the calibration data.}
 
-\item{all_colony_info}{Data frame containing colony information.}
+\item{all_colony_info}{A data frame containing colony information for all loggers (one row per colony). The required columns are `colony`, `latitude`, and `longitude`.}
 
 \item{output_directory}{Directory to save processed position outputs.}
 

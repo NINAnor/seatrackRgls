@@ -8,6 +8,7 @@
 #' @param output_directory Directory to save processed position outputs.
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
 #' @param export_calibration_template A logical indicating whether to export a calibration template. Defaults to TRUE.
+#' @param filter_list A GLSfilterList object containing filter settings for loggers or a path to load one. Defaults to `seatrackRgls::seatrack_settings_list`.
 #' @export
 prepare_calibration <- function(
     import_directory,

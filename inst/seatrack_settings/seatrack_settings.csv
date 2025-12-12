@@ -1,20 +1,20 @@
-﻿literature_speed;speed;boundary.box;coast_to_land;coast_to_sea;loess_filter_k;months_breeding;species;latin
-Pennycuick 1997, Edwards et al. 2013;70;c(-95,100,30,88);100;Inf;6;c(4,5,6,7,8);Black-legged kittiwake;Rissa tridactyla
-Pennycuick 1997;90;c(-100,100,-80,88);100;Inf;10;c(4,5,6,7,8,9);Arctic tern;Sterna paradisaea
-Pennycuick 1997;20;c(-30,50,35,88);100;Inf;1;c(4,5,6,7,8);Common eider;Somateria mollissima
-Pennycuick 1997;40;c(-180,180,-85,-49);Inf;Inf;6;c(10,11,12,1,2);Snow petrel;Pagodroma nivea
-Pennycuick 1997;30;c(-110,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Brünnich's guillemot;Uria lomvia
-Pennycuick 1997;30;c(-110,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Thick-billed murre;Uria lomvia
-Pennycuick 1997;30;c(-95,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Common guillemot;Uria aalge
-Pennycuick 1997;30;c(-95,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Common murre;Uria aalge
-Fayet 2016;30;c(-85,70,25,88);100;Inf;3;c(5,6,7,8,9);Atlantic puffin;Fratercula arctica
-Pennycuick 1997;70;c(-95,50,-50,75);100;Inf;6;c(5,6,7,8,9);Leach's storm petrel;Hydrobates leucorhous
-Pennycuick 1997;40;c(-100,100,0,80);100;Inf;6;c(4,5,6,7,8,9);Northern gannet;Morus bassanus
-Pennycuick 1997;30;c(-95,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Razorbill;Alca torda
-Jakubas et al. 2016;30;c(-90,110,30,88);100;Inf;3;c(4,5,6,7,8,9);Little auk;Alle alle
-Edwards et al. 2013;60;c(-95,90,30,88);100;Inf;3;c(4,5,6,7,8,9);Northern fulmar;Fulmarus glacialis
-Pennycuick 1997;30;c(-100,80,40,88);100;Inf;2;c(4,5,6,7,8,9);Glaucous gull;Larus hyperboreus
-Pennycuick 1997;20;c(-90,55,30,75);Inf;Inf;2;c(4,5,6,7,8);Herring gull;Larus argentatus
-Klaassen et al. 2012, Bustnes et al. 2013;60;c(-30,80,-10,72);Inf;Inf;3;c(4,5,6,7,8);Lesser black-backed gull;Larus fuscus
-Pennycuick 1997;80;c(-90,50,0,82);Inf;Inf;6;c(4,5,6,7,8);Great skua;Stercorarius skua
-Pennycuick 1997;15;c(-30,50,50,72);100;200;2;c(4,5,6,7,8);European shag;Gulosus aristotelis
+﻿literature_speed;speed;boundary.box;coast_to_land;coast_to_sea;loess_filter_k;months_breeding;species;latin;split_years
+Pennycuick 1997, Edwards et al. 2013;70;c(-95,100,30,88);100;Inf;6;c(4,5,6,7,8);Black-legged kittiwake;Rissa tridactyla;01-06
+Pennycuick 1997;90;c(-100,100,-80,88);100;Inf;10;c(4,5,6,7,8,9);Arctic tern;Sterna paradisaea;01-06
+Pennycuick 1997;20;c(-30,50,35,88);100;Inf;1;c(4,5,6,7,8);Common eider;Somateria mollissima;01-06
+Pennycuick 1997;40;c(-180,180,-85,-49);Inf;Inf;6;c(10,11,12,1,2);Snow petrel;Pagodroma nivea;01-06
+Pennycuick 1997;30;c(-110,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Brünnich's guillemot;Uria lomvia;01-06
+Pennycuick 1997;30;c(-110,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Thick-billed murre;Uria lomvia;01-06
+Pennycuick 1997;30;c(-95,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Common guillemot;Uria aalge;01-06
+Pennycuick 1997;30;c(-95,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Common murre;Uria aalge;01-06
+Fayet 2016;30;c(-85,70,25,88);100;Inf;3;c(5,6,7,8,9);Atlantic puffin;Fratercula arctica;01-06
+Pennycuick 1997;70;c(-95,50,-50,75);100;Inf;6;c(5,6,7,8,9);Leach's storm petrel;Hydrobates leucorhous;01-06
+Pennycuick 1997;40;c(-100,100,0,80);100;Inf;6;c(4,5,6,7,8,9);Northern gannet;Morus bassanus;01-06
+Pennycuick 1997;30;c(-95,90,35,88);100;Inf;3;c(4,5,6,7,8,9);Razorbill;Alca torda;01-06
+Jakubas et al. 2016;30;c(-90,110,30,88);100;Inf;3;c(4,5,6,7,8,9);Little auk;Alle alle;01-06
+Edwards et al. 2013;60;c(-95,90,30,88);100;Inf;3;c(4,5,6,7,8,9);Northern fulmar;Fulmarus glacialis;01-06
+Pennycuick 1997;30;c(-100,80,40,88);100;Inf;2;c(4,5,6,7,8,9);Glaucous gull;Larus hyperboreus;01-06
+Pennycuick 1997;20;c(-90,55,30,75);Inf;Inf;2;c(4,5,6,7,8);Herring gull;Larus argentatus;01-06
+Klaassen et al. 2012, Bustnes et al. 2013;60;c(-30,80,-10,72);Inf;Inf;3;c(4,5,6,7,8);Lesser black-backed gull;Larus fuscus;01-06
+Pennycuick 1997;80;c(-90,50,0,82);Inf;Inf;6;c(4,5,6,7,8);Great skua;Stercorarius skua;01-06
+Pennycuick 1997;15;c(-30,50,50,72);100;200;2;c(4,5,6,7,8);European shag;Gulosus aristotelis;01-06

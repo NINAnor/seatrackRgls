@@ -19,7 +19,6 @@
 #' @param plotting_dir An optional directory path to save plotting outputs. Defaults to NULL.
 #' @param output_dir An optional directory path to save processed outputs. Defaults to NULL.
 #' @param calibration_mode A logical indicating whether to run in calibration mode. Defaults to TRUE
-#' @param split_years A character string indicating the month and day to split light data into time windows on when only deployment and retrieval dates are provided (format "MM-DD"). Defaults to "06-01".
 #' @param analyzer An optional string indicating the analyzer who provided calibration data, if this column is not provided in calibration data. Defaults to an empty string.
 #' @return If calibration_mode is FALSE, returns a list containing:
 #'          - `twilight_estimates`: A data frame of twilight estimates.
@@ -40,7 +39,6 @@ process_logger_year <- function(
     plotting_dir = NULL,
     output_dir = NULL,
     calibration_mode = TRUE,
-    split_years = "06-01",
     analyzer = "") {
     print(paste("Processing logger", logger_id, "for year", year))
     file_info <- scan_import_dir(import_directory)
@@ -64,6 +62,11 @@ process_logger_year <- function(
 
     logger_calibration_data <- calibration_data[calibration_data$logger_id == logger_id, ]
 
+    if (is.character(filter_list)) {
+        filter_list <- read_filter_file(filter_list)
+    }
+    # Get logger filter settings
+    logger_filter <- filter_list$get_settings_from_list(species = logger_calibration_data$species[1], colony = logger_calibration_data$colony[1], logger_id = logger_calibration_data$logger_id)
 
     if (is.null(logger_calibration_data$logger_model)) {
         print("logger_model not found in calibration_data, setting to empty string")
@@ -99,7 +102,7 @@ process_logger_year <- function(
         }
 
         # split by deployment/retrieval dates
-        time_windows <- get_calibration_splits(logger_calibration_data, split_years)
+        time_windows <- get_calibration_splits(logger_calibration_data, logger_filter$split_years)
         logger_calibration_data <- data.frame(
             logger_calibration_data[, c("logger_id", "logger_model")],
             time_windows,
@@ -137,11 +140,7 @@ process_logger_year <- function(
     # Get logger colony info
     logger_colony_info <- all_colony_info[all_colony_info$colony == logger_calibration_data$colony[1], ]
 
-    if (is.character(filter_list)) {
-        filter_list <- read_filter_file(filter_list)
-    }
-    # Get logger filter settings
-    logger_filter <- filter_list$get_settings_from_list(logger_calibration_data$species[1])
+
 
     result <- process_logger_light_data(
         filepaths = filepaths,

@@ -12,9 +12,19 @@ GLSsettings <- R6::R6Class(
         #' @param colony Optional colony name to associate with these settings.
         #' @param settings Optional list of filter settings. If NULL, defaults to settings for the provided species from `seatrackRgls::seatrack_settings_list`.
         initialize = function(logger_id = NULL, species = NULL, colony = NULL, settings = NULL) {
-            self$logger_id <- tolower(logger_id)
-            self$species <- tolower(species)
-            self$colony <- tolower(colony)
+            self$logger_id <- logger_id
+            self$species <- species
+            self$colony <- colony
+
+            if (!is.null(self$logger_id)) {
+                self$logger_id <- tolower(self$logger_id)
+            }
+            if (!is.null(self$species)) {
+                self$species <- tolower(self$species)
+            }
+            if (!is.null(self$colony)) {
+                self$colony <- tolower(self$colony)
+            }
 
             if (!is.null(settings)) {
                 self$settings <- settings
@@ -94,8 +104,8 @@ GLSfilterList <- R6::R6Class(
                     return(settings_obj$settings)
                 }
             }
-            if (!is.null(species)) {
-                print("No matching settings found in filter list, using default settings for species.")
+            if (!is.null(species) && species %in% names(seatrackRgls::seatrack_settings_list$filter_list)) {
+                print("No matching settings found in filter list, trying default seatrack settings for species.")
                 return(seatrackRgls::seatrack_settings_list$get_settings_from_list(species = species))
             } else {
                 print("No matching settings found in filter list, using default settings for black-legged kittiwake.")
@@ -174,10 +184,12 @@ create_filter_file <- function(filepath, species = c()) {
 
     all_rows <- lapply(species, function(species_name) {
         species_name <- tolower(species_name)
-        if (species_name %in% names(seatrackRgls::seatrack_settings_list)) {
-            seatrack_default <- seatrackRgls::seatrack_settings_list[[species]]
+        if (species_name %in% tolower(names(seatrackRgls::seatrack_settings_list$filter_list))) {
+            seatrack_default <- seatrackRgls::seatrack_settings_list$get_settings_from_list(species = species_name)
         } else {
-            seatrack_default <- seatrackRgls::seatrack_settings_list[["black-legged kittiwake"]]
+            seatrack_default <- seatrackRgls::seatrack_settings_list$get_settings_from_list(species = "black-legged kittiwake")
+            seatrack_default$latin <- NA
+            seatrack_default$literature_speed <- NA
         }
         months_breeding <- seatrack_default$months_breeding
         seatrack_default$months_breeding_start <- months_breeding[1]

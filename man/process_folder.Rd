@@ -24,7 +24,7 @@ In calibration mode, this dataframe can consist of a single row per logger/year 
 In calibration mode, the minimum required columns are `logger_id`, `species`, `colony`, `date_deployed` and `date_retrieved`.
 If not in calibration mode, the data frame is expected to be in the format output by running this function in calibration mode.}
 
-\item{all_colony_info}{A data frame containing colony information for all loggers.}
+\item{all_colony_info}{A data frame containing colony information for all loggers (one row per colony). The required columns are `colony`, `latitude`, and `longitude`.}
 
 \item{filter_list}{A list of filter settings for different species. Defaults to `seatrack_settings_list`.}
 

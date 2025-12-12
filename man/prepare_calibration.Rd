@@ -10,7 +10,8 @@ prepare_calibration(
   all_colony_info,
   output_directory,
   show_filter_plots = FALSE,
-  export_calibration_template = TRUE
+  export_calibration_template = TRUE,
+  filter_list = seatrackRgls::seatrack_settings_list
 )
 }
 \arguments{
@@ -20,13 +21,15 @@ prepare_calibration(
 In calibration mode, this dataframe can consist of a single row per logger/year combination.
 In calibration mode, the minimum required columns are `logger_id`, `species`, `colony`, `date_deployed` and `date_retrieved`.}
 
-\item{all_colony_info}{Data frame containing colony information.}
+\item{all_colony_info}{A data frame containing colony information for all loggers (one row per colony). The required columns are `colony`, `latitude`, and `longitude`.}
 
 \item{output_directory}{Directory to save processed position outputs.}
 
 \item{show_filter_plots}{A logical indicating whether to show filter plots. Defaults to FALSE.}
 
 \item{export_calibration_template}{A logical indicating whether to export a calibration template. Defaults to TRUE.}
+
+\item{filter_list}{A GLSfilterList object containing filter settings for loggers or a path to load one. Defaults to `seatrackRgls::seatrack_settings_list`.}
 }
 \description{
 Prepare Calibration Data from a Folder

@@ -5,7 +5,7 @@
 \alias{seatrack_settings_list}
 \title{Seatrack filter settings}
 \format{
-An object of class \code{list} of length 19.
+An object of class \code{GLSfilterList} (inherits from \code{R6}) of length 5.
 }
 \usage{
 seatrack_settings_list

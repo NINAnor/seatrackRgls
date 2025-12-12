@@ -47,13 +47,12 @@ process_light_position <- function(
     light_data, light_data_calibration, logger_filter, logger_colony_info, logger_extra_metadata,
     show_filter_plots = FALSE, plotting_dir = NULL,
     prev_posdata_export = NULL, type = "main", calibration_mode = FALSE) {
-
     light_data_calibration <- add_default_cols(light_data_calibration)
 
     if (is.na(light_data_calibration$sun_angle_start)) {
         if (type != "main") {
             stop("Provide manual calibration values before continuing.")
-        }else if(!calibration_mode){
+        } else if (!calibration_mode) {
             print("Skipping due to lack of calibration values.")
             return(NULL)
         }
@@ -326,20 +325,50 @@ process_light_position <- function(
 
     if (!calibration_mode) {
         if (type == "main") {
-            seasonal_calibration_result <- handle_seasonal_calibration(
-                posdata_export,
-                light_data,
-                filtering,
-                light_data_calibration,
-                logger_filter,
-                logger_colony_info,
-                logger_extra_metadata
+            seasonal_calibration_result <- tryCatch(
+                {
+                    handle_seasonal_calibration(
+                        posdata_export,
+                        light_data,
+                        filtering,
+                        light_data_calibration,
+                        logger_filter,
+                        logger_colony_info,
+                        logger_extra_metadata
+                    )
+                },
+                error = function(e) {
+                    print(paste("Error during seasonal calibration:", e$message))
+                    print("Proceeding without seasonal adjustments.")
+                    return(list(
+                        posdata_export = posdata_export,
+                        filtering = filtering
+                    ))
+                }
             )
+
+            posdata_export_ws_af <- seasonal_calibration_result$posdata_export
+            filtering <- seasonal_calibration_result$filtering
+
+            # Run land mask filter
+            print("Applying land mask filter...")
+            land_mask <- land_mask(
+                lon = posdata_export_ws_af$lon, lat = posdata_export_ws_af$lat,
+                coast_to_land = logger_filter$coast_to_land,
+                coast_to_sea = logger_filter$coast_to_sea,
+                eqfilter = posdata_export_ws_af$eqfilter
+            )
+            filtering$removed_landmask_seasonal <- sum(land_mask)
+            print(paste("Removed", filtering$removed_landmask_seasonal, "positions during land mask filtering of positions."))
+            posdata_export_final <- posdata_export_ws_af[!land_mask, ]
+
+            posdata_export_final$lat_smooth2 <- NULL
+            posdata_export_final$lon_smooth2 <- NULL
 
             return(list(
                 twilight_estimates = twilight_data_nf,
-                posdata_export = seasonal_calibration_result$posdata_export,
-                filtering = seasonal_calibration_result$filtering
+                posdata_export = posdata_export_final,
+                filtering = filtering
             ))
         } else {
             return(posdata_export)
@@ -456,23 +485,8 @@ handle_seasonal_calibration <- function(
     posdata_export_ws_af$argosfilter1 <- NULL
     posdata_export_ws_af$argosfilter2 <- NULL
 
-    # Run land mask filter
-    print("Applying land mask filter on combined seasonal positions...")
-    land_mask <- land_mask(
-        lon = posdata_export_ws_af$lon, lat = posdata_export_ws_af$lat,
-        coast_to_land = logger_filter$coast_to_land,
-        coast_to_sea = logger_filter$coast_to_sea,
-        eqfilter = posdata_export_ws_af$eqfilter
-    )
-    filtering$removed_landmask_seasonal <- sum(land_mask)
-    print(paste("Removed", filtering$removed_landmask_seasonal, "positions during land mask filtering of combined seasonal positions."))
-    posdata_export_final <- posdata_export_ws_af[!land_mask, ]
-
-    posdata_export_final$lat_smooth2 <- NULL
-    posdata_export_final$lon_smooth2 <- NULL
-
     return(list(
-        posdata_export = posdata_export_final,
+        posdata_export = posdata_export_ws_af,
         filtering = filtering
     ))
 }
