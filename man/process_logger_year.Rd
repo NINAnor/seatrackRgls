@@ -17,7 +17,6 @@ process_logger_year(
   plotting_dir = NULL,
   output_dir = NULL,
   calibration_mode = TRUE,
-  split_years = "06-01",
   analyzer = ""
 )
 }
@@ -48,8 +47,6 @@ If not in calibration mode, the data frame is expected to be in the format outpu
 \item{output_dir}{An optional directory path to save processed outputs. Defaults to NULL.}
 
 \item{calibration_mode}{A logical indicating whether to run in calibration mode. Defaults to TRUE}
-
-\item{split_years}{A character string indicating the month and day to split light data into time windows on when only deployment and retrieval dates are provided (format "MM-DD"). Defaults to "06-01".}
 
 \item{analyzer}{An optional string indicating the analyzer who provided calibration data, if this column is not provided in calibration data. Defaults to an empty string.}
 }

@@ -45,4 +45,5 @@ process_positions(
     calibration_data = file.path(dir_output, "calibration_data", "calibration.xlsx"),
     all_colony_info = metadata[1, c("colony", "col_lon", "col_lat")],
     output_directory = dir_output,
+    filter_list <- filter_path
 )

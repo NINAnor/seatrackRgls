@@ -23,6 +23,8 @@ process_positions(
 \item{output_directory}{Directory to save processed position outputs.}
 
 \item{extra_metadata}{Optional data frame containing extra metadata for loggers.}
+
+\item{filter_list}{A GLSfilterList object containing filter settings for loggers or a path to load one. Defaults to `seatrackRgls::seatrack_settings_list`.}
 }
 \description{
 Process Positions from a Folder
