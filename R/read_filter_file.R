@@ -99,8 +99,27 @@ GLSfilterList <- R6::R6Class(
         #' @param colony Optional colony name to match.
         #' @return A list of filter settings matching the provided identifiers. If no match is found, returns default settings for the species.
         get_settings_from_list = function(species = NULL, colony = NULL, logger_id = NULL) {
+            print(paste("Searching for matching filter settings for species:", species, "colony:", colony, "logger_id:", logger_id))
+            # Try with all three identifiers
             for (settings_obj in self$filter_list) {
                 if (settings_obj$check_settings_for(species, colony, logger_id)) {
+                    print("Found matching settings with species, colony, and logger_id.")
+                    return(settings_obj$settings)
+                }
+            }
+            print(paste("Searching for matching filter settings for species:", species, "colony:", colony))
+            # Try with species and colony
+            for (settings_obj in self$filter_list) {
+                if (settings_obj$check_settings_for(species, colony, NULL)) {
+                    print("Found matching settings with species and colony.")
+                    return(settings_obj$settings)
+                }
+            }
+            print(paste("Searching for matching filter settings for species:", species))
+            # Try with species only
+            for (settings_obj in self$filter_list) {
+                if (settings_obj$check_settings_for(species, NULL, NULL)) {
+                    print("Found matching settings with species only.")
                     return(settings_obj$settings)
                 }
             }
@@ -139,12 +158,12 @@ read_filter_file <- function(filepath) {
         row <- filter_df[i, ]
         settings <- as.list(row)
         # Convert boundary.box and months_breeding from string to numeric vector
-        settings$boundary.box <- c(
+        settings$boundary.box <- sf::st_bbox(c(
             xmin = as.numeric(settings$boundary.box_xmin),
             xmax = as.numeric(settings$boundary.box_xmax),
             ymin = as.numeric(settings$boundary.box_ymin),
             ymax = as.numeric(settings$boundary.box_ymax)
-        )
+        ))
         settings$boundary.box_xmin <- NULL
         settings$boundary.box_xmax <- NULL
         settings$boundary.box_ymin <- NULL
@@ -162,11 +181,27 @@ read_filter_file <- function(filepath) {
             settings$coast_to_land <- Inf
         }
 
+        if (is.na(settings$logger_id)) {
+            logger_id <- NULL
+        } else {
+            logger_id <- settings$logger_id
+        }
+        if (is.na(settings$species)) {
+            species <- NULL
+        } else {
+            species <- settings$species
+        }
+        if (is.na(settings$colony)) {
+            colony <- NULL
+        } else {
+            colony <- settings$colony
+        }
+
         # Create SettingsList object
-        settings_obj <- SettingsList$new(
-            logger_id = ifelse(is.na(settings$logger_id), NULL, settings$logger_id),
-            species = ifelse(is.na(settings$species), NULL, settings$species),
-            colony = ifelse(is.na(settings$colony), NULL, settings$colony),
+        settings_obj <- GLSsettings$new(
+            logger_id = logger_id,
+            species = species,
+            colony = colony,
             settings = settings
         )
         filter_list[[length(filter_list) + 1]] <- settings_obj
@@ -176,6 +211,10 @@ read_filter_file <- function(filepath) {
 
 
 create_filter_file <- function(filepath, species = c()) {
+    if (file.exists(filepath)) {
+        print("File already exists at the specified filepath. Please choose a different filepath or delete the existing file.")
+        return()
+    }
     empty <- FALSE
     if (length(species) == 0) {
         empty <- TRUE

@@ -27,13 +27,17 @@ dir_output <- "C:/Users/julian.evans/Norsk Polarinstitutt/Benjamin Merkel - SEAT
 # Example excel sheet to load:
 metadata <- as.data.frame(readxl::read_excel(paste0(dir_metadata, "metadata.xlsx")))
 
+filter_path <- file.path(dir_output, "filter_settings.xlsx")
+create_filter_file(filter_path, "razorbill")
+
 # help(prepare_calibration)
 prepare_calibration(
     import_directory = dir_loggerdata,
     metadata = metadata,
     all_colony_info = metadata[1, c("colony", "col_lon", "col_lat")],
     output_dir = dir_output,
-    show_filter_plots = TRUE
+    show_filter_plots = TRUE,
+    filter_list = filter_path
 )
 
 process_positions(

@@ -40,6 +40,7 @@ prepare_calibration <- function(
 #' @param all_colony_info A data frame containing colony information for all loggers (one row per colony). The required columns are `colony`, `latitude`, and `longitude`.
 #' @param output_directory Directory to save processed position outputs.
 #' @param extra_metadata Optional data frame containing extra metadata for loggers.
+#' @param filter_list A GLSfilterList object containing filter settings for loggers or a path to load one. Defaults to `seatrackRgls::seatrack_settings_list`.
 #' @export
 process_positions <- function(
     import_directory,
