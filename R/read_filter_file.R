@@ -2,6 +2,7 @@
 #' @description A convenience class for storing settings lists alongside identifiers to which logger/species/colony they belong
 #' @export
 #' @family classes
+#' @concept custom_filters
 GLSsettings <- R6::R6Class(
     "GLSsettings",
     public = list(
@@ -81,6 +82,7 @@ GLSsettings <- R6::R6Class(
 #' @description A convenience class for storing a list of GLSsettings objects and retrieving settings based on logger/species/colony.
 #' @export
 #' @family classes
+#' @concept custom_filters
 GLSfilterList <- R6::R6Class(
     "GLSfilterList",
     public = list(
@@ -143,6 +145,7 @@ GLSfilterList <- R6::R6Class(
 #' See `create_filter_file` for an example of the expected format.
 #' @param filepath Filepath to the filter settings file (Excel or CSV).
 #' @return A GLSfilterList object containing the filter settings.
+#' @concept custom_filters
 #' @export
 read_filter_file <- function(filepath) {
     file_extension <- tools::file_ext(filepath)
@@ -209,7 +212,16 @@ read_filter_file <- function(filepath) {
     GLSfilterList$new(filter_list)
 }
 
-
+#' Create Filter File
+#'
+#' Create an example filter settings Excel file for specified species.
+#' The file will contain default filter settings for each species.
+#' See `read_filter_file` for reading the filter file.
+#' @param filepath Filepath to save the filter settings Excel file.
+#' @param species Vector of species names to include in the filter file. If empty, creates an empty template with default settings for black-legged kittiwake.
+#' @return None. The function creates an Excel file at the specified filepath.
+#' @concept custom_filters
+#' @export
 create_filter_file <- function(filepath, species = c()) {
     if (file.exists(filepath)) {
         print("File already exists at the specified filepath. Please choose a different filepath or delete the existing file.")

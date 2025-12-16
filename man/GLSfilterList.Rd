@@ -11,6 +11,7 @@ Other classes:
 \code{\link{GLSsettings}}
 }
 \concept{classes}
+\concept{custom_filters}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{

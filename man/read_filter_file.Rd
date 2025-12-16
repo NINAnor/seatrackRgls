@@ -17,3 +17,4 @@ Read filter settings from an Excel or CSV file and return as a GLSfilterList obj
 The filter file should contain columns for logger_id, species, colony, and various filter settings.
 See `create_filter_file` for an example of the expected format.
 }
+\concept{custom_filters}
