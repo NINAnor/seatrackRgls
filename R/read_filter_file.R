@@ -11,11 +11,13 @@ GLSsettings <- R6::R6Class(
         #' @param logger_id Optional logger ID to associate with these settings.
         #' @param species Optional species name to associate with these settings.
         #' @param colony Optional colony name to associate with these settings.
+        #' @param years_tracked Optional years tracked to associate with these settings.
         #' @param settings Optional list of filter settings. If NULL, defaults to settings for the provided species from `seatrackRgls::seatrack_settings_list`.
-        initialize = function(logger_id = NULL, species = NULL, colony = NULL, settings = NULL) {
+        initialize = function(logger_id = NULL, species = NULL, colony = NULL, years_tracked = NULL, settings = NULL) {
             self$logger_id <- logger_id
             self$species <- species
             self$colony <- colony
+            self$years_tracked <- years_tracked
 
             if (!is.null(self$logger_id)) {
                 self$logger_id <- tolower(self$logger_id)
@@ -25,6 +27,9 @@ GLSsettings <- R6::R6Class(
             }
             if (!is.null(self$colony)) {
                 self$colony <- tolower(self$colony)
+            }
+            if (!is.null(self$years_tracked)) {
+                self$years_tracked <- tolower(self$years_tracked)
             }
 
             if (!is.null(settings)) {
@@ -43,6 +48,8 @@ GLSsettings <- R6::R6Class(
         colony = NULL,
         #' @field logger_id Logger ID identifier
         logger_id = NULL,
+        #' @field years_tracked Years tracked identifier
+        years_tracked = NULL,
         #' @field settings A list containing filter settings for the logger/species/colony.
         settings = list(),
         #' @description
@@ -50,8 +57,9 @@ GLSsettings <- R6::R6Class(
         #' @param species Optional species name to match.
         #' @param logger_id Optional logger ID to match.
         #' @param colony Optional colony name to match.
+        #' @param years_tracked Optional years tracked to match.
         #' @return TRUE if the settings match the provided identifiers, FALSE otherwise.
-        check_settings_for = function(species = NULL, logger_id = NULL, colony = NULL) {
+        check_settings_for = function(species = NULL, logger_id = NULL, colony = NULL, years_tracked = NULL) {
             if (!is.null(logger_id)) {
                 if (!is.null(self$logger_id)) {
                     if (self$logger_id != tolower(logger_id)) {
@@ -69,6 +77,13 @@ GLSsettings <- R6::R6Class(
             if (!is.null(colony)) {
                 if (!is.null(self$colony)) {
                     if (self$colony != tolower(colony)) {
+                        return(FALSE)
+                    }
+                }
+            }
+            if (!is.null(years_tracked)) {
+                if (!is.null(self$years_tracked)) {
+                    if (self$years_tracked != years_tracked) {
                         return(FALSE)
                     }
                 }
@@ -96,11 +111,20 @@ GLSfilterList <- R6::R6Class(
         filter_list = list(),
         #' @description
         #' Get Settings from settings_list based on logger ID, species, or colony.
-        #' @param logger_id Optional logger ID to match.
         #' @param species Optional species name to match.
         #' @param colony Optional colony name to match.
+        #' @param logger_id Optional logger ID to match.
+        #' @param years_tracked Optional year tracked to match
         #' @return A list of filter settings matching the provided identifiers. If no match is found, returns default settings for the species.
-        get_settings_from_list = function(species = NULL, colony = NULL, logger_id = NULL) {
+        get_settings_from_list = function(species = NULL, colony = NULL, logger_id = NULL, years_tracked = NULL) {
+            print(paste("Searching for matching filter settings for species:", species, "colony:", colony, "logger_id:", logger_id, "years_tracked:", years_tracked))
+            for (settings_obj in self$filter_list) {
+                if (settings_obj$check_settings_for(species, colony, logger_id, years_tracked)) {
+                    print("Found matching settings with species, colony, logger_id, years_tracked.")
+                    return(settings_obj$settings)
+                }
+            }
+
             print(paste("Searching for matching filter settings for species:", species, "colony:", colony, "logger_id:", logger_id))
             # Try with all three identifiers
             for (settings_obj in self$filter_list) {
@@ -199,10 +223,17 @@ read_filter_file <- function(filepath) {
         } else {
             colony <- settings$colony
         }
+        if (is.na(settings$years_tracked)) {
+            years_tracked <- NULL
+        } else {
+            years_tracked <- settings$years_tracked
+        }
+
 
         # Create SettingsList object
         settings_obj <- GLSsettings$new(
             logger_id = logger_id,
+            years_tracked = years_tracked,
             species = species,
             colony = colony,
             settings = settings
@@ -261,7 +292,7 @@ create_filter_file <- function(filepath, species = c()) {
             seatrack_default$coast_to_land <- NA
         }
 
-        seatrack_default_df <- data.frame(species = species_name, colony = NA, logger_id = NA, seatrack_default)
+        seatrack_default_df <- data.frame(species = species_name, colony = NA, logger_id = NA, years_tracked = NA, seatrack_default)
     })
     all_rows <- do.call(rbind, all_rows)
     if (empty) {
@@ -272,6 +303,6 @@ create_filter_file <- function(filepath, species = c()) {
     wb$add_worksheet("Filter settings")
     wb$add_data_table(sheet = "Filter settings", x = all_rows, banded_rows = TRUE, table_style = "TableStyleMedium19", na.strings = "")
     wb$set_col_widths(sheet = "Filter settings", cols = 1:ncol(all_rows), widths = "auto")
-    wb$freeze_pane(sheet = "Filter settings", firstActiveRow = 2, firstActiveCol = 4)
+    wb$freeze_pane(sheet = "Filter settings", firstActiveRow = 2, firstActiveCol = 5)
     wb$save(file = filepath, overwrite = TRUE)
 }

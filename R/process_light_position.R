@@ -9,15 +9,7 @@ add_default_cols <- function(light_data_calibration) {
     if (is.null(light_data_calibration$light_threshold)) {
         light_data_calibration$light_threshold <- NA
     }
-    if (is.null(light_data_calibration$noon_filter) || is.na(light_data_calibration$noon_filter)) {
-        light_data_calibration$noon_filter <- TRUE
-    }
-    if (is.null(light_data_calibration$daylength_filter) || is.na(light_data_calibration$daylength_filter)) {
-        light_data_calibration$daylength_filter <- TRUE
-    }
-    if (is.null(light_data_calibration$midnightsun_removal) || is.na(light_data_calibration$midnightsun_removal)) {
-        light_data_calibration$midnightsun_removal <- TRUE
-    }
+
     return(light_data_calibration)
 }
 
@@ -162,7 +154,7 @@ process_light_position <- function(
     print(paste("Moved", filtering$moved_twilight_positions, "twilight positions."))
 
     # daylengthfilter
-    if (light_data_calibration$daylength_filter) {
+    if (logger_filter$daylength_filter) {
         twilight_data_dl <-
             export_filter_plot(
                 {
@@ -180,7 +172,7 @@ process_light_position <- function(
     print(paste("Removed", filtering$removed_daylengthfilter, "twilights during daylength filtering."))
 
     # noonfilter
-    if (light_data_calibration$noon_filter) {
+    if (logger_filter$noon_filter) {
         twilight_data_nf <-
             export_filter_plot(
                 {
@@ -195,7 +187,7 @@ process_light_position <- function(
         twilight_data_nf <- twilight_data_dl
     }
     if (nrow(twilight_data_dl) == nrow(twilight_data_nf)) {
-        light_data_calibration$noon_filter <- FALSE
+        logger_filter$noon_filter <- FALSE
     }
     filtering$removed_noonfilter <- (nrow(twilight_data_dl) - nrow(twilight_data_nf))
     print(paste("Removed", filtering$removed_noonfilter, "twilights during noon filtering."))
@@ -246,7 +238,7 @@ process_light_position <- function(
     print(paste("Removed", filtering$removed_loess, "positions during loess filtering."))
 
     # Exclude midnight sun period at colony-----------
-    if (light_data_calibration$midnightsun_removal) {
+    if (logger_filter$midnightsun_removal) {
         posdata_ms <- aut_midnight_sun_removal(df = posdata_loess)
     } else {
         posdata_ms <- posdata_loess
@@ -259,8 +251,23 @@ process_light_position <- function(
 
     posdata_ds <- double_smoothing(df = posdata_ms, sun = get_sun_angle_seq(posdata_ms, light_data_calibration))
     print("Applied double smoothing to final positions.")
+    filter_df <- logger_filter
+    filter_df$months_breeding_start <- filter_df$months_breeding[1]
+    filter_df$months_breeding_end <- filter_df$months_breeding[length(filter_df$months_breeding)]
+    filter_df$months_breeding <- NULL
+    boundary.box <- logger_filter$boundary.box
+    filter_df$boundary.box <- NULL
+    filter_df <- data.frame(filter_df)
+    filter_df$boundary.box_xmin <- boundary.box["xmin"]
+    filter_df$boundary.box_xmax <- boundary.box["xmax"]
+    filter_df$boundary.box_ymin <- boundary.box["ymin"]
+    filter_df$boundary.box_ymax <- boundary.box["ymax"]
+    filter_df$species <- NULL
+    filter_df$colony <- NULL
+    filter_df$logger_id <- NULL
+    filter_df$years_tracked <- NULL
 
-    posdata_export <- data.frame(posdata_ds, light_data_calibration, logger_colony_info)
+    posdata_export <- data.frame(posdata_ds, light_data_calibration, logger_colony_info, filter_df)
     posdata_export$sun_angle <- get_sun_angle_seq(posdata_export, light_data_calibration)
     posdata_export$logger_id_year <- paste(posdata_export$logger_id[1], strsplit(posdata_export$total_years_tracked[1], "_")[[1]][2], sep = "_")
     posdata_export$script_version <- 3.0
@@ -294,6 +301,16 @@ process_light_position <- function(
         light_threshold,
         noon_filter,
         daylength_filter,
+        speed,
+        coast_to_land,
+        coast_to_sea,
+        loess_filter_k,
+        months_breeding_start,
+        months_breeding_end,
+        boundary.box_xmin,
+        boundary.box_xmax,
+        boundary.box_ymin,
+        boundary.box_ymax,
         analyzer
     )
 

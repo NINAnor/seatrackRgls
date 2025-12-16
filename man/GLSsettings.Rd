@@ -21,6 +21,8 @@ Other classes:
 
 \item{\code{logger_id}}{Logger ID identifier}
 
+\item{\code{years_tracked}}{Years tracked identifier}
+
 \item{\code{settings}}{A list containing filter settings for the logger/species/colony.}
 }
 \if{html}{\out{</div>}}
@@ -43,6 +45,7 @@ Create a new GLSsettings object
   logger_id = NULL,
   species = NULL,
   colony = NULL,
+  years_tracked = NULL,
   settings = NULL
 )}\if{html}{\out{</div>}}
 }
@@ -56,6 +59,8 @@ Create a new GLSsettings object
 
 \item{\code{colony}}{Optional colony name to associate with these settings.}
 
+\item{\code{years_tracked}}{Optional years tracked to associate with these settings.}
+
 \item{\code{settings}}{Optional list of filter settings. If NULL, defaults to settings for the provided species from `seatrackRgls::seatrack_settings_list`.}
 }
 \if{html}{\out{</div>}}
@@ -67,7 +72,12 @@ Create a new GLSsettings object
 \subsection{Method \code{check_settings_for()}}{
 Check if these settings are for a particular combination of logger/species/colony
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{GLSsettings$check_settings_for(species = NULL, logger_id = NULL, colony = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{GLSsettings$check_settings_for(
+  species = NULL,
+  logger_id = NULL,
+  colony = NULL,
+  years_tracked = NULL
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -78,6 +88,8 @@ Check if these settings are for a particular combination of logger/species/colon
 \item{\code{logger_id}}{Optional logger ID to match.}
 
 \item{\code{colony}}{Optional colony name to match.}
+
+\item{\code{years_tracked}}{Optional years tracked to match.}
 }
 \if{html}{\out{</div>}}
 }

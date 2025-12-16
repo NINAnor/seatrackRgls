@@ -131,7 +131,10 @@ process_logger_year <- function(
 
     # Get extra metadata for this logger and end year
     if (!is.null(extra_metadata)) {
-        extra_metadata_year <- format(extra_metadata$date_retrieved, "%Y")
+        if (!is.null()(extra_metadata$date_retrieved)) {
+            extra_metadata_year <- format(extra_metadata$date_retrieved, "%Y")
+        }
+
         logger_extra_metadata <- extra_metadata[extra_metadata$logger_id == logger_id & extra_metadata_year == year, ]
     } else {
         logger_extra_metadata <- NULL
@@ -145,7 +148,7 @@ process_logger_year <- function(
     result <- process_logger_light_data(
         filepaths = filepaths,
         logger_calibration_data = logger_calibration_data,
-        logger_filter = logger_filter,
+        filter_list = filter_list, # continue passing filter_list so we can try and get a per year filter
         logger_colony_info = logger_colony_info,
         logger_extra_metadata = logger_extra_metadata,
         show_filter_plots = show_filter_plots,
@@ -155,7 +158,6 @@ process_logger_year <- function(
 
     if (calibration_mode == FALSE) {
         if (!is.null(output_dir) && !is.null(result)) {
-
             pos_output_dir <- file.path(output_dir, "processed_positions")
             if (!dir.exists(pos_output_dir)) {
                 dir.create(pos_output_dir, recursive = TRUE)

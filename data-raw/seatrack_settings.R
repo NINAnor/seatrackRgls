@@ -25,6 +25,7 @@ GLS_settings_list <- lapply(seatrack_filter_list, function(x) {
         logger_id = NULL,
         species = tolower(x$species),
         colony = NULL,
+        years_tracked = NULL,
         settings = x
     )
 })

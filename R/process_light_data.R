@@ -5,7 +5,7 @@
 #'
 #' @param filepaths A vector of file paths to the light data files.
 #' @param logger_calibration_data A data frame containing calibration data for the logger. If multiple calibration windows are provided, each will be processed in sequence.
-#' @param logger_filter A list of filter settings specific to the logger species.
+#' @param filter_list A list of filter settings for different species. Defaults to `seatrack_settings_list`.
 #' @param logger_colony_info A data frame containing colony information for the logger.
 #' @param logger_extra_metadata A data frame containing extra metadata for the logger.
 #' @param show_filter_plots A logical indicating whether to show filter plots. Defaults to FALSE.
@@ -21,7 +21,8 @@
 process_logger_light_data <- function(
     filepaths,
     logger_calibration_data,
-    logger_filter, logger_colony_info,
+    filter_list, 
+    logger_colony_info,
     logger_extra_metadata = NULL,
     show_filter_plots = FALSE,
     plotting_dir = NULL,
@@ -45,6 +46,8 @@ process_logger_light_data <- function(
         print(paste("Processing calibration window", i, "of", nrow(logger_calibration_data)))
         light_data <- light_data_split[[i]]
         light_data_calibration <- logger_calibration_data[i, ]
+        logger_filter <- filter_list$get_settings_from_list(species = light_data_calibration$species[1], colony = light_data_calibration$colony[1], logger_id = light_data_calibration$logger_id[1], years_tracked = light_data_calibration$years_tracked[1])
+
         if (nrow(light_data) < min_length) {
             print(paste("Light data has only", nrow(light_data), "rows, skipping."))
             if (calibration_mode) {

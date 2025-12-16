@@ -53,7 +53,8 @@ Get Settings from settings_list based on logger ID, species, or colony.
 \if{html}{\out{<div class="r">}}\preformatted{GLSfilterList$get_settings_from_list(
   species = NULL,
   colony = NULL,
-  logger_id = NULL
+  logger_id = NULL,
+  years_tracked = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -65,6 +66,8 @@ Get Settings from settings_list based on logger ID, species, or colony.
 \item{\code{colony}}{Optional colony name to match.}
 
 \item{\code{logger_id}}{Optional logger ID to match.}
+
+\item{\code{years_tracked}}{Optional year tracked to match}
 }
 \if{html}{\out{</div>}}
 }
