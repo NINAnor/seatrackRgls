@@ -39,8 +39,10 @@ Imports:
     openxlsx2,
     distancetocoast,
     GeoLocTools
-Remotes: SLisovski/GeoLight,
+Remotes: 
+    SLisovski/GeoLight,
     distancetocoast=github::mdsumner/distancetocoast
+    bluegreen-labs/geoloctools
 Suggests: 
     knitr,
     rmarkdown,

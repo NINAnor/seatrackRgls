@@ -24,7 +24,7 @@ You can install the development version of seatrackRgls from
 
 ``` r
 # install.packages("pak")
-pak::pak("NINAnor/seatrack-gls")
+pak::pak("NINAnor/seatrackRgls")
 ```
 
 ## Example

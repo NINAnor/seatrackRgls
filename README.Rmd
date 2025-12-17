@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of seatrackRgls is to estimate up to two positions a day from light-level data from geolocators 
-    (Lotek, BAS, Biotrack, Migrate Technology) using a threshold method. 
+(Lotek, BAS, Biotrack, Migrate Technology) using a threshold method. 
     It automatically edits twilight events used for calculating positions and filter positions based on 
     flight speed, distribution, distance, and midnight sun periods. 
     If allowed, the package saves plots to your local computer the aid a subjective calibration of sun elevation angles, 
