@@ -131,7 +131,7 @@ process_logger_year <- function(
 
     # Get extra metadata for this logger and end year
     if (!is.null(extra_metadata)) {
-        if (!is.null()(extra_metadata$date_retrieved)) {
+        if (!is.null(extra_metadata$date_retrieved)) {
             extra_metadata_year <- format(extra_metadata$date_retrieved, "%Y")
         }
 

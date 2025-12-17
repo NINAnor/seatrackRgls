@@ -83,11 +83,14 @@ process_folder <- function(
     }
     if (calibration_mode) {
         all_calibration <- do.call(rbind, all_result)
-        if (export_calibration_template) {
+        calibration_output_dir <- file.path(output_dir, "calibration_data")
+        if (export_calibration_template && !file.exists(calibration_output_dir)) {
             # do some workbook formattign to make it easier to fill in
-            calibration_output_dir <- file.path(output_dir, "calibration_data")
             calibration_to_wb(all_calibration, calibration_output_dir, "calibration.xlsx")
+        }else if (file.exists(calibration_output_dir)){
+            print(paste("Calibration output directory", calibration_output_dir, "already exists, not overwriting existing calibration file."))
         }
+
         return(all_calibration)
     }
 }

@@ -37,11 +37,12 @@ Imports:
     future.apply,
     rnaturalearthdata,
     suntools,
-    chron
+    chron,
+    openxlsx2,
+    distancetocoast,
+    GeoLocTools
 Remotes: SLisovski/GeoLight,
-    distancetocoast=github::mdsumner/distancetocoast,
-    GeoLocTools=github::SLisovski/GeoLocTools,
-    seatrackR=github::NINAnor/seatrack-db/seatrackR
+    distancetocoast=github::mdsumner/distancetocoast
 Suggests: 
     knitr,
     rmarkdown
