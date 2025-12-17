@@ -1,13 +1,11 @@
 Package: seatrackRgls
 Type: Package
 Title: An automated procedure used in the SEATRACK project to obtain positions from light-level geolocators in large- scale tracking of seabirds
-Version: 3.0
+Version: 0.3
 Authors@R: c(
-    person("Vegard Sandøy", "Bråthen", email = "vegard.brathen@nina.no", role = c("cre","aut"),comment = c(ORCID = "0000-0002-7357-6727")),
-    person("Julian", "Evans", email = "julian.evans@nina.nl", role = "aut")
+    person("Vegard Sandøy", "Bråthen", email = "vegard.brathen@nina.no", role = c("cre","aut"),comment = c(ORCID = "0000-0002-7357-6727", note="Original creator, GLS expert")),
+    person("Julian", "Evans", email = "julian.evans@nina.nl", role = "aut", comment = c(note="Code assistance"))
     )
-Author: Vegard Sandøy Bråthen <vegard.brathen@nina.no> 
-Maintainer: Vegard Sandøy Bråthen <vegard.brathen@nina.no> 
 Description: estimate up to two positions a day from light-level data from geolocators 
     (Lotek, BAS, Biotrack, Migrate Technology) using a threshold method. 
     It automatically edits twilight events used for calculating positions and filter positions based on 
@@ -17,7 +15,7 @@ Description: estimate up to two positions a day from light-level data from geolo
     First with a "best-guess" sun angle, then with the calibrated sun angle. 
 Depends: 
     R (>= 3.5)
-License: GPL
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Imports: 
@@ -45,6 +43,12 @@ Remotes: SLisovski/GeoLight,
     distancetocoast=github::mdsumner/distancetocoast
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    fs,
+    grid,
+    tiff,
+    png
 VignetteBuilder: knitr
 RoxygenNote: 7.3.3
+Roxygen: list(markdown = TRUE)
+URL: https://ninanor.github.io/seatrackRgls/

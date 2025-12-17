@@ -1,0 +1,35 @@
+url: https://ninanor.github.io/seatrackRgls/
+template:
+  bootstrap: 5
+reference:
+- title: Data calibration and position export
+  desc: High level functions for the processing of GLS light data
+  contents: has_concept("processing_wrapper")
+- title: Filters
+  desc: Filters used to clean light data while processing.
+  contents: has_concept("filtering")
+- title: Processing
+  desc: Functions for the bulk processing of GLS light data
+  contents:
+    - process_folder
+    - process_logger_year
+    - process_logger_light_data
+    - apply_filters
+- title: Data preparation
+  desc: Functions used while preparing light data for processing
+  contents: has_concept("prepare_data_function")  
+- title: Custom filter settings
+  desc: Tools to provide custom filter settings
+  contents: 
+    - has_concept("custom_filters")
+    - GLSFilterSettingsList
+    - GLSsettings
+- title: Data
+  desc: Data used in this package
+  contents: has_concept("data")
+- title: Plotting
+  desc: Functions used for plotting
+  contents: has_concept("plotting")
+- title: General functions
+  desc: General utility functions
+  contents: has_concept("function")

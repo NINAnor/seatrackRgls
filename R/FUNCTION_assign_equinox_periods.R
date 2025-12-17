@@ -25,6 +25,7 @@
 #' @param breedingloc_lat Approximate latitude for the breeding locality.
 #' @param sun Numeric  value showing the sun's angle to the horizon at each twilight. Is a result based on the chosen threshold of light used in twilight estimations and the light sensor sensitivity
 #' @return A list saying if the equinox effect is present or not (1 = no equinox effect, 0 = equinox effect).
+#' @concept prepare_data_function
 #' @export
 assign_equinox_periods <- function(lats, dates, breedingloc_lat, sun) {
     ### må legge til funksjonen en måte å forstå median sun angle for de samme periodene.

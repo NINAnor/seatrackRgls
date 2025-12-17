@@ -3,6 +3,7 @@
 #'
 #' @param df data frame with lat, lon, eqfilter, date_time, col_lat, col_lon, colony
 #' @return Plotted map.
+#' @concept plotting
 #' @export
 plot_a_map <- function(df) {
    par(mfrow = c(1, 1))

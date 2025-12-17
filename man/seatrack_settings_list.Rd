@@ -5,12 +5,13 @@
 \alias{seatrack_settings_list}
 \title{Seatrack filter settings}
 \format{
-An object of class \code{GLSfilterList} (inherits from \code{R6}) of length 5.
+An object of class \code{GLSFilterSettingsList} (inherits from \code{R6}) of length 5.
 }
 \usage{
 seatrack_settings_list
 }
 \description{
-Default seatrack filter settings
+Default seatrack filter settings in as \code{GLSFilterSettingsList} object.
 }
+\concept{data}
 \keyword{datasets}

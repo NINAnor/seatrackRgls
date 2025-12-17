@@ -15,3 +15,4 @@ Converted date in format "yyyy-mm-dd UTC"
 \description{
 convert dates for seatrackGLS
 }
+\keyword{internal}

@@ -1,3 +1,11 @@
+#' Speed Filter for Position Data
+#'
+#' Filters position data based on travel speed and longitude changes during equinox periods.
+#' @param posdata A data frame containing position data with columns `lat_smooth2`, `lon_smooth2`, `tFirst`, and `eqfilter`.
+#' @param speed Maximum allowable speed in km/h.
+#' @return A filtered data frame with positions exceeding speed limits or showing abnormal longitude changes during equinox periods removed.
+#' @concept filtering
+#' @export
 speed_filter <- function(posdata, speed) {
     i.get.outliers <- function(residuals, k = 3) {
         x <- residuals

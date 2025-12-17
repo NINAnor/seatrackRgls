@@ -2,7 +2,7 @@
 #'
 #' @param date Date to be converted
 #' @return Converted date in format "yyyy-mm-dd UTC"
-#' @export
+#' @keywords internal
 date_conversion <- function(date, tz = "UTC") {
    date <- as.character(date)
    output <- NULL

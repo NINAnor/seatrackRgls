@@ -5,17 +5,17 @@
 \alias{equinox_table}
 \title{Equinox table}
 \format{
-## `equinox_table`
-A data frame with 4,669 rows and 10 columns:
-\describe{
-  \item{latitude}{Latitude}
-  \item{sun_angle}{Angle of sun}
-}
+An object of class \code{data.frame} with 4669 rows and 10 columns.
 }
 \usage{
 equinox_table
 }
 \description{
 Vegard's magical table of equinoxes
+\describe{
+\item{latitude}{Latitude}
+\item{sun_angle}{Angle of sun}
 }
+}
+\concept{data}
 \keyword{datasets}

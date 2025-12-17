@@ -1,6 +1,16 @@
+#' Bounding Box Filter for Position Data
+#'
+#' Filters position data based on a defined bounding box, removing positions outside the specified latitude and longitude limits.
+#' @param posdata A data frame containing position data with columns `lon`, `lat`, and `tFirst`.
+#' @param light_data_calibration A list containing light data calibration parameters.
+#' @param logger_filter A list containing logger filter parameters, including default boundary box limits.
+#' @return A filtered data frame with positions outside the bounding box removed.
+#' @concept filtering
+#' @export
 bounding_box_filter <- function(posdata, light_data_calibration, logger_filter){
     # latitudes only filtered outside the equinox
 
+        # obsolete now we use custom filter settings.
         if(is.null(light_data_calibration$bbox_xmin)){
             boundary.box <- logger_filter$boundary.box
         }else{

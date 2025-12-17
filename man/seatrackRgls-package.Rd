@@ -8,12 +8,19 @@
 \description{
 estimate up to two positions a day from light-level data from geolocators (Lotek, BAS, Biotrack, Migrate Technology) using a threshold method. It automatically edits twilight events used for calculating positions and filter positions based on flight speed, distribution, distance, and midnight sun periods. If allowed, the package saves plots to your local computer the aid a subjective calibration of sun elevation angles, which is crucial for producing realistic latitudes. The script should be run twice. First with a "best-guess" sun angle, then with the calibrated sun angle.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://ninanor.github.io/seatrackRgls/}
+}
+
+}
 \author{
-\strong{Maintainer}: Vegard Sandøy Bråthen \email{vegard.brathen@nina.no} (\href{https://orcid.org/0000-0002-7357-6727}{ORCID})
+\strong{Maintainer}: Vegard Sandøy Bråthen \email{vegard.brathen@nina.no} (\href{https://orcid.org/0000-0002-7357-6727}{ORCID}) (Original creator, GLS expert)
 
 Authors:
 \itemize{
-  \item Julian Evans \email{julian.evans@nina.nl}
+  \item Julian Evans \email{julian.evans@nina.nl} (Code assistance)
 }
 
 }

@@ -29,6 +29,6 @@ GLS_settings_list <- lapply(seatrack_filter_list, function(x) {
         settings = x
     )
 })
-seatrack_settings_list <- GLSfilterList$new(GLS_settings_list)
+seatrack_settings_list <- GLSFilterSettingsList$new(GLS_settings_list)
 
 usethis::use_data(seatrack_settings_list, overwrite = TRUE)
