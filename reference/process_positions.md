@@ -1,0 +1,62 @@
+# Process Positions from a Folder
+
+Convience function for processing GLS logger data using provided
+calibration values. Uses 'process_folder()' to process a folder of light
+data. See 'process_folder()' for more details. Custom settings can be
+provided using `filter_setting_list`. For the creation of an empty
+filter settings template see 'create_filter_settings_file()'
+
+## Usage
+
+``` r
+process_positions(
+  import_directory,
+  calibration_data,
+  all_colony_info,
+  output_directory,
+  extra_metadata = NULL,
+  filter_setting_list = seatrackRgls::seatrack_settings_list
+)
+```
+
+## Arguments
+
+- import_directory:
+
+  Directory containing raw light data files. These are expected to be
+  named in the format `<logger_id>_<year_retrieved>_<logger_model>`,
+  e.g. `C23_2015_mk4083`
+
+- calibration_data:
+
+  Data frame containing calibration data for loggers or a path pointing
+  to the calibration data, as created by prepare_calibration().
+
+- all_colony_info:
+
+  A data frame containing colony information for all loggers (one row
+  per colony). The required columns are `colony`, `latitude`, and
+  `longitude`.
+
+- output_directory:
+
+  Directory to save processed position outputs, plots etc.
+
+- extra_metadata:
+
+  Optional data frame containing extra metadata for loggers. This must
+  have the column `logger_id` to join extra metadata. A `year_retrieved`
+  column can also be provided to join based on a combination of logger
+  and which session this is.
+
+- filter_setting_list:
+
+  A 'GLSFilterSettingsList' object containing filter settings for
+  loggers or a path to load one using 'read_filter_file()'. Defaults to
+  'seatrack_settings_list'.
+
+## Details
+
+Will export a folder containing (for each logger), processed positions,
+twilight estimates, plots showing the effects of filters, a folder of
+summary files detailing the results of filters used and maps.
