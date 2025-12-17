@@ -37,6 +37,7 @@ Imports:
     suntools,
     chron,
     openxlsx2,
+    raster,
     distancetocoast,
 Remotes: 
     SLisovski/GeoLight,
