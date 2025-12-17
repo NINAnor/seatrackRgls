@@ -42,7 +42,7 @@ Imports:
 Remotes: 
     SLisovski/GeoLight,
     distancetocoast=github::mdsumner/distancetocoast,
-    bluegreen-labs/geoloctools
+    GeoLocTools=github::bluegreen-labs/geoloctools
 Suggests: 
     knitr,
     rmarkdown,
