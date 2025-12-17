@@ -41,7 +41,7 @@ Imports:
     GeoLocTools
 Remotes: 
     SLisovski/GeoLight,
-    distancetocoast=github::mdsumner/distancetocoast
+    distancetocoast=github::mdsumner/distancetocoast,
     bluegreen-labs/geoloctools
 Suggests: 
     knitr,
