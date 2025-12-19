@@ -37,9 +37,22 @@ process_logger_light_data <- function(
     # if there is more than one light file,
     # First check the logger model
     print("Load light data...")
-    all_light_data <- get_light_data(filepaths)
-    print("Limit light data to calibration time windows...")
-    light_data_split <- limit_light_data(all_light_data, logger_calibration_data)
+    all_light_data <- tryCatch(
+        {
+            get_light_data(filepaths)
+        },
+        error = function(e) {
+            print(paste("Error loading file:", e))
+            return(NULL)
+        }
+    )
+    if (!is.null(all_light_data)){
+        print("Limit light data to calibration time windows...")
+        light_data_split <- limit_light_data(all_light_data, logger_calibration_data)
+    }else {
+        light_data_split <- rep(list(data.frame()), nrow(logger_calibration_data))
+    }
+
 
     all_results <- list()
 
@@ -52,7 +65,7 @@ process_logger_light_data <- function(
         if (nrow(light_data) < min_length) {
             print(paste("Light data has only", nrow(light_data), "rows, skipping."))
             if (calibration_mode) {
-                result <- logger_calibration_data[i, ]
+                result <- light_data_calibration
                 result <- add_default_cols(result)
                 result$problem <- TRUE
             }
