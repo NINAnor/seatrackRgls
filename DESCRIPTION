@@ -40,7 +40,7 @@ Imports:
     raster,
     distancetocoast,
 Remotes: 
-    SLisovski/GeoLight,
+    GeoLight=github::SLisovski/GeoLight,
     distancetocoast=github::mdsumner/distancetocoast,
     GeoLocTools=github::bluegreen-labs/geoloctools
 Suggests: 
